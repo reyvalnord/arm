@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>REPORT // VANGUARD-001</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #ff0000;
+      --accent-glow: color-mix(in srgb, var(--accent) 30%, transparent);
+      --accent-hover: color-mix(in srgb, var(--accent) 15%, transparent);
+      --accent-bg: color-mix(in srgb, var(--accent) 5%, #050507);
+      
+      --bg: #050507;
+      --surface: #0e0e12;
+      --surface-border: #1a1a24;
+      --text-main: #f0f0f5;
+      --text-muted: #8b8b9e;
+      
+      --font-ui: 'Outfit', sans-serif;
+      --font-data: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at top center, var(--accent-bg), var(--bg) 80%);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      padding: 12px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header-card {
+      background: rgba(14, 14, 18, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--accent);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+
+    /* UKURAN FONT JUDUL (PC/DESKTOP) DIPERKECIL DI SINI */
+    .title-box h1 {
+      font-size: 0.95rem; 
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .title-box .subtitle {
+      font-family: var(--font-data);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .stats-box {
+      text-align: right;
+    }
+    
+    .stats-box .label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .stats-box .value {
+      font-family: var(--font-data);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .data-container {
+      width: 100%;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center; 
+    }
+
+    table {
+      width: 100%;
+      max-width: 900px;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0 6px; 
+      text-align: center;
+    }
+
+    th.col-name { width: 38%; }
+    th.col-val { width: 11.5%; }
+    th.col-total { width: 16%; }
+
+    thead th {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 8px 6px 8px;
+      font-weight: 600;
+      border: none;
+    }
+
+    tbody tr {
+      background: var(--surface);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    tbody tr:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    tbody td {
+      padding: 10px 8px;
+      font-family: var(--font-data);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--surface-border);
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    tbody td.name {
+      border-left: 3px solid var(--accent);
+      border-radius: 8px 0 0 8px;
+    }
+
+    tbody td:last-child {
+      border-right: 1px solid var(--surface-border);
+      border-radius: 0 8px 8px 0;
+    }
+
+    tr.rank-1 td.name { border-left-color: #ffd700; }
+    tr.rank-2 td.name { border-left-color: #c0c0c0; }
+    tr.rank-3 td.name { border-left-color: #cd7f32; }
+
+    td.name {
+      text-align: left;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      color: #fff;
+      position: relative;
+      padding-left: 45px; 
+    }
+    
+    th.col-name {
+      text-align: left;
+      padding-left: 45px;
+    }
+
+    td.name::before {
+      content: attr(data-rank);
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-data);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      width: 24px;
+      text-align: left;
+    }
+
+    tr.rank-1 td.name::before { color: #ffd700; font-weight: 800; font-size: 0.8rem; }
+    tr.rank-2 td.name::before { color: #c0c0c0; font-weight: 800; font-size: 0.8rem; }
+    tr.rank-3 td.name::before { color: #cd7f32; font-weight: 800; font-size: 0.8rem; }
+
+    .name-text {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    td.val {
+      color: var(--text-muted);
+    }
+
+    .badge-total {
+      display: inline-block;
+      padding: 4px 10px;
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      min-width: 45px;
+    }
+
+    .hide-col { display: none !important; }
+
+    footer {
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-top: 10px;
+      padding-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 6px; }
+      .header-card { padding: 12px 14px; border-radius: 8px; margin-bottom: 4px; }
+      
+      /* UKURAN FONT JUDUL (HP/MOBILE) DIPERKECIL DI SINI */
+      .title-box h1 { font-size: 0.75rem; } 
+      .title-box .subtitle { font-size: 0.5rem; }
+      
+      .stats-box .value { font-size: 0.9rem; }
+      
+      table { 
+        width: 100%; 
+        table-layout: fixed; 
+        border-spacing: 0 4px; 
+      }
+      
+      th.col-name { width: 40%; padding-left: 36px; } 
+      th.col-val { width: 11%; } 
+      th.col-total { width: 16%; } 
+      
+      thead th {
+        font-size: 0.55rem;
+        padding: 0 2px 4px 2px;
+        letter-spacing: 0;
+      }
+      
+      tbody td {
+        padding: 8px 2px; 
+        font-size: 0.7rem; 
+      }
+
+      td.name {
+        padding-left: 36px !important;
+      }
+
+      td.name::before {
+        left: 8px !important;
+        font-size: 0.7rem !important;
+        width: 22px;
+      }
+
+      tr.rank-1 td.name::before, tr.rank-2 td.name::before, tr.rank-3 td.name::before {
+        font-size: 0.8rem !important; 
+      }
+
+      .name-text {
+        font-size: 0.75rem;
+      }
+
+      .badge-total {
+        padding: 3px 4px;
+        font-size: 0.75rem;
+        min-width: unset;
+        border-radius: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-card">
+      <div class="title-box">
+        <h1>REPORT // VANGUARD-001</h1>
+        <div class="subtitle">DECRYPTED DATA OVERVIEW</div>
+      </div>
+      <div class="stats-box">
+        <div class="label">Total Agents</div>
+        <div class="value">2</div>
+      </div>
+    </div>
+
+    <div class="data-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="hide-col">Rank</th>
+            <th class="hide-col">Code</th>
+            <th class="col-name">Agent</th>
+            <th class="col-val">EZ</th>
+            <th class="col-val">MD</th>
+            <th class="col-val">HD</th>
+            <th class="col-val">EV</th>
+            <th class="hide-col">Unit</th>
+            <th class="hide-col">Gen</th>
+            <th class="col-total">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr class="rank-1">
+            <td class="hide-col">1</td>
+            <td class="hide-col code">11111</td>
+            <td class="name" data-rank="🏆 1"><div class="name-text">BAKSO BERANAK</div></td>
+            <td class="val">50</td>
+            <td class="val">50</td>
+            <td class="val">50</td>
+            <td class="val">50</td>
+            <td class="hide-col">VANGUARD-001</td>
+            <td class="hide-col">1</td>
+            <td class="total"><span class="badge-total">200</span></td>
+          </tr>
+          <tr class="rank-2">
+            <td class="hide-col">2</td>
+            <td class="hide-col code">10001</td>
+            <td class="name" data-rank="🥈 2"><div class="name-text">EDAMAME GORENG</div></td>
+            <td class="val">10</td>
+            <td class="val">10</td>
+            <td class="val">10</td>
+            <td class="val">10</td>
+            <td class="hide-col">VANGUARD-001</td>
+            <td class="hide-col">2</td>
+            <td class="total"><span class="badge-total">40</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer>EXTRACTED BY <span style="color:var(--accent); font-weight:bold;">PROGRAMMER ARM</span></footer>
+  </div>
+
+</body>
+</html>

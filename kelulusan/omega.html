@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACCESS GRANTED: OMEGA</title>
+
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="shortcut icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="favicon.png">
+
+  <meta property="og:title" content="AREA ANONYMOUS">
+  <meta property="og:description" content="Secure Digital Interface ARM">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Poppins:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-blue: #9b5cff;
+      --neon-blue-strong: #7a3cff;
+      --deep-blue: #1a0033;
+      --bg-black: #06050a;
+      --bg-2: #0d0714;
+      --line: rgba(155, 92, 255, 0.18);
+      --text: #f6f2ff;
+      --muted: rgba(246, 242, 255, 0.68);
+      --green: #00ff9d;
+      --red: #ff4d4d;
+      --shadow: 0 15px 40px rgba(0, 0, 0, .4);
+
+      --cyan: #00f0ff;
+      --dark-cyan: #005b66;
+      --text-label: #00c3d9;
+      --text-white: #ffffff;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-display: 'Rajdhani', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top, rgba(155, 92, 255, .10), transparent 30%),
+        linear-gradient(180deg, var(--bg-black), var(--bg-2));
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* OPTIMASI: Menyederhanakan background overlay agar tidak memberatkan render */
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background: linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+      background-size: 30px 30px; opacity: .2; pointer-events: none; z-index: 0;
+    }
+
+    .grid-3d {
+      position: fixed; inset: -50% -50%; z-index: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(155, 92, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(155, 92, 255, .05) 1px, transparent 1px);
+      background-size: 42px 42px; transform: perspective(900px) rotateX(58deg) translateY(120px);
+      animation: gridMove 25s linear infinite; /* OPTIMASI: Animasi diperlambat agar lebih ringan */
+      opacity: .25;
+      will-change: transform; /* Bantuan Hardware Acceleration GPU */
+    }
+
+    .matrix-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .6; will-change: contents; }
+
+    .page { width: min(1180px, 100%); position: relative; z-index: 5; display: grid; gap: 16px; }
+
+    .shell {
+      background: linear-gradient(180deg, rgba(19, 12, 30, .92), rgba(10, 7, 18, .92)); /* Background digelapkan */
+      border: 1px solid var(--line); border-radius: 28px;
+      box-shadow: var(--shadow);
+      /* OPTIMASI UTAMA: Blur diturunkan dari 14px ke 6px, sangat ampuh mengurangi lag */
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); 
+      padding: 30px 24px 22px; overflow: hidden; position: relative;
+    }
+
+    .shell::before {
+      content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(155, 92, 255, .50), rgba(255,255,255,0), rgba(122, 60, 255, .25));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: .8;
+    }
+
+    .scanline {
+      position: absolute; width: 100%; height: 3px; background: rgba(155, 92, 255, 0.4);
+      box-shadow: 0 0 10px var(--neon-blue);
+      top: 0; left: 0; z-index: 50; pointer-events: none; opacity: 0.5;
+      animation: scanEffect 4s ease-in-out infinite; /* Diperlambat sedikit */
+      will-change: top;
+    }
+
+    @keyframes scanEffect { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
+
+    .logo-animated { display: flex; justify-content: center; margin-bottom: 15px; margin-top: 7px; }
+    .logo-animated img { height: 68px; max-width: min(280px, 100%); object-fit: contain; user-select: none; filter: drop-shadow(0 0 8px rgba(155,92,255,0.3)); }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif; font-size: clamp(1.7rem, 4.5vw, 2.55rem); letter-spacing: 2.8px;
+      text-align: center; line-height: 1.1; margin-top: 4px; text-shadow: 0 0 15px rgba(155, 92, 255, .3); font-weight: 900;
+    }
+
+    #typing-text::after { content: '|'; margin-left: 6px; color: var(--neon-blue); animation: blink 1s step-end infinite; }
+    .tagline { text-align: center; margin-top: 10px; color: var(--neon-blue); font-family: 'Share Tech Mono', monospace; letter-spacing: 2.4px; font-size: .88rem; text-transform: uppercase; }
+    .top-note { text-align: center; margin-top: 10px; color: var(--muted); font-size: .67rem; line-height: 1.6; }
+
+    .input-area { margin-top: 22px; display: flex; justify-content: center; }
+
+    input {
+      width: min(100%, 520px); border: none; outline: none; border-radius: 18px; padding: 15px 18px; text-align: center;
+      background: rgba(255,255,255,.04); color: #fff; border: 1px solid rgba(155, 92, 255, .26);
+      font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; font-size: 1.02rem; transition: .2s ease; text-transform: uppercase;
+    }
+    input::placeholder { color: rgba(255,255,255,.35); letter-spacing: 1px; }
+    input:focus { border-color: rgba(155, 92, 255, .7); background: rgba(255,255,255,.06); }
+
+    .button-container { display: flex; gap: 12px; justify-content: center; align-items: stretch; width: min(100%, 520px); margin: 18px auto 0; }
+
+    .btn-cyber {
+      flex: 1; min-width: 0; border: none; cursor: pointer; border-radius: 16px; padding: 13px 14px;
+      font-family: 'Orbitron', sans-serif; font-weight: 600; letter-spacing: 1.3px; font-size: .88rem;
+      text-transform: uppercase; color: #fff; background: linear-gradient(180deg, rgba(155, 92, 255, .90), rgba(122, 60, 255, .90));
+      box-shadow: 0 8px 20px rgba(155, 92, 255, .15); transition: .2s ease;
+    }
+    .btn-cyber:nth-child(2) { background: linear-gradient(180deg, rgba(23, 16, 34, .98), rgba(12, 8, 18, .98)); border: 1px solid rgba(155, 92, 255, .28); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
+    .btn-cyber:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(155, 92, 255, .3); }
+    .btn-cyber:active { transform: translateY(0); }
+    .btn-cyber:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .loading {
+      margin-top: 16px; text-align: center; color: var(--neon-blue); font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 1.4px; font-size: .98rem; min-height: 22px; text-shadow: 0 0 8px var(--neon-blue);
+    }
+    .decrypt-chars { color: #fff; font-weight: bold; opacity: 0.8; }
+
+    .result { margin-top: 16px; display: grid; gap: 14px; }
+
+    @keyframes cardGlitch {
+      0% { clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%); opacity: 0; transform: translateY(-10px); }
+      50% { clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); opacity: 1; }
+      100% { transform: translateY(0); opacity: 1; clip-path: none; }
+    }
+    .glitch-anim { animation: cardGlitch 0.35s ease-out forwards; } /* Animasi dipercepat sedikit */
+
+    .result-card {
+      position: relative; background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 18px 18px 16px; overflow: hidden;
+      max-width: 650px; margin: 0;
+    }
+
+    .result-card.failed { border: 1px solid rgba(255, 77, 77, 0.3); background: rgba(28, 8, 12, 0.9); }
+    .result-card.sys-error { border: 1px solid rgba(155, 92, 255, 0.3); background: rgba(18, 10, 34, 0.9); }
+    .result-card .result-title { color: #ffd5d5; margin-bottom: 5px; font-weight: bold;}
+    .result-card.sys-error .result-title { color: #f0ddff; }
+    .error-text { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.5; }
+    .code-highlight { color: #ff6b6b; font-weight: 700; font-size: 0.85rem; }
+
+    .report-shell {
+      margin-top: 4px; padding: clamp(10px, 3vw, 16px);
+      background: linear-gradient(180deg, rgba(19, 12, 30, .9), rgba(10, 7, 18, .9));
+      border: 1px solid var(--line); border-radius: clamp(12px, 3vw, 20px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); /* Mengurangi beban */
+      position: relative; overflow: hidden; width: 100%; max-width: 650px; margin: 0 auto;
+    }
+
+    .report-shell.passed { border-color: rgba(0,255,157,.22); background: linear-gradient(180deg, rgba(10, 20, 15, .9), rgba(5, 12, 8, .9)); }
+    .report-shell.failed { border-color: rgba(255, 77, 77, .22); background: linear-gradient(180deg, rgba(25, 10, 12, .9), rgba(12, 5, 8, .9)); }
+
+    .report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: clamp(8px, 2vw, 14px); padding-bottom: clamp(8px, 2vw, 12px); margin-bottom: clamp(10px, 2.5vw, 14px); border-bottom: 1px solid rgba(155, 92, 255, .16); position: relative; z-index: 1; }
+    .report-head-left { display: flex; align-items: center; gap: clamp(8px, 2vw, 12px); min-width: 0; }
+    .report-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: -1px; font-size: clamp(1.2rem, 5vw, 2.2rem); color: var(--cyan); text-shadow: 0 0 10px rgba(0,240,255,.38); line-height: 1; flex: 0 0 auto; }
+    .report-shell.failed .report-logo { color: var(--red); text-shadow: 0 0 10px rgba(255,77,77,.38); }
+    .report-divider { width: 2px; align-self: stretch; background: linear-gradient(180deg, transparent, var(--cyan), transparent); opacity: .9; }
+    .report-shell.failed .report-divider { background: linear-gradient(180deg, transparent, var(--red), transparent); }
+
+    .report-title h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(0.7rem, 2.8vw, 1.1rem); letter-spacing: 2px; margin-bottom: 2px; color: var(--text-white); white-space: nowrap; }
+    .report-title p { font-family: var(--font-mono); color: var(--cyan); letter-spacing: 1.5px; font-size: clamp(0.45rem, 1.5vw, 0.65rem); }
+    .report-shell.failed .report-title p { color: var(--red); }
+
+    .report-meta { text-align: right; font-family: var(--font-mono); font-size: clamp(0.4rem, 1.5vw, 0.6rem); color: var(--text-label); letter-spacing: 1px; flex: 0 0 auto; }
+    .barcode-top { margin-top: 4px; width: clamp(50px, 15vw, 90px); height: 8px; float: right; opacity: 0.8; background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 2px, transparent 2px, transparent 4px, var(--cyan) 4px, var(--cyan) 5px, transparent 5px, transparent 8px, var(--cyan) 8px, var(--cyan) 12px, transparent 12px, transparent 14px); }
+    .report-shell.failed .barcode-top { background: repeating-linear-gradient(to right, var(--red) 0, var(--red) 2px, transparent 2px, transparent 4px, var(--red) 4px, var(--red) 5px, transparent 5px, transparent 8px, var(--red) 8px, var(--red) 12px, transparent 12px, transparent 14px); }
+
+    .report-main { display: flex; flex-direction: row !important; gap: clamp(6px, 2vw, 14px); position: relative; z-index: 1; align-items: stretch; }
+
+    .panel { border: 1px solid var(--dark-cyan); position: relative; background: rgba(0, 240, 255, 0.02); overflow: hidden; }
+    .report-shell.failed .panel { border-color: rgba(255, 77, 77, 0.4); background: rgba(255, 77, 77, 0.02); }
+
+    .panel-middle {
+      width: 100%; flex-shrink: 1; padding: clamp(10px, 2.5vw, 18px) clamp(12px, 3vw, 20px); position: relative; clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+    }
+    .panel-middle::before { content: ''; position: absolute; top: 0; left: 15px; width: 30px; height: 2px; background: var(--cyan); }
+    .report-shell.failed .panel-middle::before { background: var(--red); }
+
+    .detail-item { margin-bottom: clamp(6px, 1.5vw, 12px); border-bottom: 1px solid var(--dark-cyan); padding-bottom: clamp(2px, 0.5vw, 4px); position: relative; }
+    .report-shell.failed .detail-item { border-bottom-color: rgba(255,77,77,0.4); }
+    .detail-item::before { content: ''; position: absolute; left: 0; bottom: -1px; width: 2px; height: 4px; background-color: var(--cyan); }
+    .report-shell.failed .detail-item::before { background-color: var(--red); }
+    
+    .detail-label { font-family: var(--font-mono); font-size: clamp(0.4rem, 1.5vw, 0.6rem); color: var(--text-label); letter-spacing: 1.2px; margin-bottom: 2px; display: block; }
+    .detail-value { font-size: clamp(0.6rem, 2.5vw, 0.95rem); font-weight: 600; color: var(--text-white); letter-spacing: 1px; word-break: break-word; line-height: 1.2; }
+    .system-message { font-family: var(--font-mono); color: rgba(255,255,255,.8); line-height: 1.4; font-size: clamp(0.45rem, 1.8vw, 0.7rem); margin-top: clamp(6px, 1.5vw, 12px); }
+
+    .stamp-overlay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+      font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: 6px;
+      padding: 5px 25px; border: 5px solid; border-radius: 12px; text-transform: uppercase; z-index: 20; pointer-events: none; opacity: 0.85;
+      display: flex; justify-content: center; align-items: center; white-space: nowrap;
+      animation: stampIn 0.3s ease-out forwards;
+    }
+    .stamp-overlay.success { color: rgba(0, 255, 157, 0.9); border-color: rgba(0, 255, 157, 0.9); box-shadow: inset 0 0 10px rgba(0, 255, 157, 0.1); }
+    .stamp-overlay.fail { color: rgba(255, 77, 77, 0.9); border-color: rgba(255, 77, 77, 0.9); box-shadow: inset 0 0 10px rgba(255, 77, 77, 0.1); }
+
+    @keyframes stampIn { 0% { opacity: 0; transform: translate(-50%, -50%) rotate(-15deg) scale(2); } 100% { opacity: 0.85; transform: translate(-50%, -50%) rotate(-15deg) scale(1); } }
+    @keyframes gridMove { from { background-position: 0 0, 0 0; } to { background-position: 0 42px, 42px 0; } }
+
+    footer.page-footer { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.08); text-align: center; font-family: 'Share Tech Mono', monospace; font-size: .74rem; color: rgba(255,255,255,.45); letter-spacing: 1.1px; }
+
+    @media (max-width: 540px) {
+      body { padding: 10px; }
+      .shell { padding: 24px 18px 20px; border-radius: 24px; backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(14, 8, 22, 0.98); } /* OPTIMASI UTAMA HP: Matikan blur, HP lebih mulus! */
+      .logo-animated img { height: 80px; }
+      .button-container { gap: 10px; }
+      .btn-cyber { padding: 12px 10px; font-size: .74rem; border-radius: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grid-3d"></div>
+  <div class="matrix-bg" id="matrix"></div>
+
+  <div class="page">
+    <div class="shell">
+      <div class="top-accent"></div>
+      <div class="scanline"></div> <div class="logo-animated">
+        <img src="logoo.png" alt="ARM Logo" onerror="this.style.display='none'">
+      </div>
+
+      <h1 id="typing-text"></h1>
+      <p class="tagline">ACCESS GRANTED: FINAL OUTPUT</p>
+      <p class="top-note">[ SYS.OP ] Masukkan access code untuk melihat hasil.</p>
+
+      <div class="input-area">
+        <input type="text" id="codeInput"oninput="this.value = this.value.toUpperCase()"placeholder="ENTER ACCESS CODE" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="button-container">
+        <button class="btn-cyber" id="checkBtn" onclick="checkResult()">Result Scan</button>
+        <button class="btn-cyber" onclick="window.open('point_0002.html', '_blank')">REPORT</button>
+      </div>
+
+      <div class="loading" id="loading" style="display:none;"></div>
+      <div class="result" id="result"></div>
+
+      <footer class="page-footer">
+        Cr. PROGRAMMER ARM 2026
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    const PASS_THRESHOLD = 100;
+
+    const typingTarget = document.getElementById("typing-text");
+    const codeInput = document.getElementById("codeInput");
+    const resultDiv = document.getElementById("result");
+    const loading = document.getElementById("loading");
+    const checkBtn = document.getElementById("checkBtn");
+
+    const text = "ARM_OS";
+    let index = 0;
+
+    function escapeHtml(text) {
+      return String(text ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+    }
+
+    function typeText() {
+      if (index < text.length) {
+        typingTarget.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeText, 140);
+      }
+    }
+
+    function normalizeCode(code) { return String(code || "").trim(); }
+    function toNumber(value) { const n = parseInt(String(value ?? "").replace(/[^0-9-]/g, ""), 10); return Number.isFinite(n) ? n : 0; }
+    function normalizeKey(text) { return String(text || "").toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9+_-]/g, ""); }
+
+    function pickField(rowMap, keys, fallback = "") {
+      for (const key of keys) {
+        if (rowMap[key] !== undefined && rowMap[key] !== null && String(rowMap[key]).trim() !== "") { return String(rowMap[key]).trim(); }
+      }
+      return fallback;
+    }
+
+    function renderReportCard(data, passed, message = "") {
+      return `
+        <div class="report-shell ${passed ? 'passed' : 'failed'} glitch-anim">
+          <div class="stamp-overlay ${passed ? 'success' : 'fail'}">
+            ${passed ? 'SUCCESS' : 'FAIL'}
+          </div>
+          <div class="report-head">
+            <div class="report-head-left">
+              <div class="report-logo">ARM</div>
+              <div class="report-divider"></div>
+              <div class="report-title">
+                <h2>DECRYPTED PAYLOAD</h2>
+                <p>${passed ? 'AUTHORIZED MEMBER' : 'UNAUTHORIZED / RESTRICTED'}</p>
+              </div>
+            </div>
+            <div class="report-meta">
+              <div>ANONYMOUS</div>
+              <div>NETWORK</div>
+              <div class="barcode-top"></div>
+            </div>
+          </div>
+          <div class="report-main">
+            <div class="panel panel-middle" style="width: 100%;">
+              <div class="detail-item">
+                <span class="detail-label">NICKNAME</span>
+                <span class="detail-value">${escapeHtml(data.nickname || 'NO DATA')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">ACCESS CODE</span>
+                <span class="detail-value">${escapeHtml(data.accessCode || 'ERR_NO_INPUT')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">UNIT</span>
+                <span class="detail-value">${escapeHtml(data.unit || 'OMEGA')}</span>
+              </div>
+              ${message ? `<div class="system-message">${message}</div>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTextCard(title, html, cls = 'failed') {
+      return `
+        <div class="result-card ${cls} glitch-anim">
+          <div class="result-title">> ${escapeHtml(title)}</div>
+          <div>${html}</div>
+        </div>
+      `;
+    }
+
+    function parseTableRows(doc) {
+      const table = doc.querySelector('table');
+      if (!table) return [];
+      const headerCells = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+      const rows = [...table.querySelectorAll('tbody tr')];
+
+      return rows.map((row) => {
+        const cells = [...row.querySelectorAll('td')].map(td => td.textContent.trim());
+        const rowMap = {};
+        if (headerCells.length && headerCells.length === cells.length) {
+          headerCells.forEach((h, i) => { rowMap[normalizeKey(h)] = cells[i]; });
+        }
+        rowMap.rank = rowMap.rank || cells[0] || '';
+        rowMap.accesscode = rowMap.accesscode || rowMap.access || cells[1] || '';
+        rowMap.nickname = rowMap.nickname || rowMap.name || cells[2] || '';
+        rowMap.faceclaim = rowMap.faceclaim || rowMap.face || '';
+        rowMap.unit = rowMap.unit || '';
+        rowMap.generasi = rowMap.generasi || rowMap.generation || rowMap.gen || '';
+        rowMap.easy = rowMap.easy || cells[3] || '';
+        rowMap['med++'] = rowMap['med++'] || rowMap.medpp || rowMap.med || cells[4] || '';
+        rowMap.hard = rowMap.hard || cells[5] || '';
+        rowMap.event = rowMap.event || cells[6] || '';
+        rowMap.total = rowMap.total || cells[cells.length - 1] || '';
+
+        const aliases = Object.keys(rowMap).reduce((acc, k) => { acc[normalizeKey(k)] = rowMap[k]; return acc; }, {});
+
+        return {
+          rank: pickField(aliases, ['rank'], rowMap.rank),
+          accessCode: pickField(aliases, ['accesscode', 'kodeakses', 'access'], rowMap.accesscode),
+          nickname: pickField(aliases, ['nickname', 'name', 'nama', 'agent'], rowMap.nickname),
+          faceClaim: pickField(aliases, ['faceclaim', 'face', 'claim'], rowMap.faceclaim),
+          unit: pickField(aliases, ['unit'], rowMap.unit),
+          generasi: pickField(aliases, ['generasi', 'generation', 'gen'], rowMap.generasi),
+          easy: toNumber(pickField(aliases, ['easy'], rowMap.easy)),
+          medpp: toNumber(pickField(aliases, ['med++', 'medpp', 'med'], rowMap['med++'])),
+          hard: toNumber(pickField(aliases, ['hard'], rowMap.hard)),
+          event: toNumber(pickField(aliases, ['event'], rowMap.event)),
+          total: toNumber(pickField(aliases, ['total'], rowMap.total)),
+          clearance: pickField(aliases, ['clearance', 'clearancelevel'], ''),
+        };
+      }).filter(item => item.accessCode || item.nickname);
+    }
+
+    async function loadPointReport() {
+      const response = await fetch(`point_0002.html?v=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error('Gagal membaca point_0002.html');
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      let rows = parseTableRows(doc);
+
+      if (!rows.length) {
+        const texts = [...doc.querySelectorAll('tr')].map(tr => [...tr.querySelectorAll('td,th')].map(el => el.textContent.trim()));
+        rows = texts.map(cells => ({
+          accessCode: cells[1] || '', nickname: cells[2] || '', total: toNumber(cells[cells.length - 1]),
+          easy: toNumber(cells[3]), medpp: toNumber(cells[4]), hard: toNumber(cells[5]), event: toNumber(cells[6]),
+          faceClaim: '', unit: '', generasi: '', clearance: '',
+        })).filter(item => item.accessCode || item.nickname);
+      }
+      return rows;
+    }
+
+    // OPTIMASI: Animasi direnggangkan durasi reflow-nya dari 50ms ke 100ms agar ringan
+    function playDecryptAnimation(duration) {
+      return new Promise((resolve) => {
+        loading.style.display = 'block';
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+        const interval = setInterval(() => {
+          let randomStr = "";
+          for (let i = 0; i < 12; i++) randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+          loading.innerHTML = `> MENGANALISIS: <span class="decrypt-chars">${randomStr}</span>`;
+        }, 100); 
+
+        setTimeout(() => {
+          clearInterval(interval);
+          loading.style.display = 'none';
+          resolve();
+        }, duration);
+      });
+    }
+
+    async function checkResult() {
+      const code = normalizeCode(codeInput.value);
+      resultDiv.innerHTML = '';
+      if (!code) {
+        resultDiv.innerHTML = renderTextCard('SYS.ERR // KODE KOSONG', `<span class="error-text">Access code belum diisi.</span>`, 'sys-error');
+        return;
+      }
+
+      checkBtn.disabled = true;
+      checkBtn.innerText = "PROCESSING...";
+
+      await playDecryptAnimation(1200);
+
+      try {
+        const report = await loadPointReport();
+        const matched = report.find(item => normalizeCode(item.accessCode) === code);
+        
+        if (!matched) {
+          resultDiv.innerHTML = renderTextCard('ACCESS DENIED', `<span class="error-text">Code <span class="code-highlight">${escapeHtml(code)}</span> tidak terdaftar dalam database.</span>`, 'failed');
+          return;
+        }
+
+        const passed = matched.total >= PASS_THRESHOLD;
+        const message = passed ? '' : ``;
+        resultDiv.innerHTML = renderReportCard(matched, passed, message);
+        
+      } catch (err) {
+        resultDiv.innerHTML = renderTextCard('SYSTEM MALFUNCTION', `<span class="error-text">Gagal membaca <span class="code-highlight">point_0002.html</span>.</span>`, 'failed');
+      } finally {
+        checkBtn.disabled = false;
+        checkBtn.innerText = "Result Scan";
+      }
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkResult(); });
+
+    const canvas = document.createElement('canvas');
+    document.getElementById('matrix').appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+    const fontSize = 14;
+    let columns = 0;
+    let drops = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0,0,0,0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(155, 92, 255, 0.32)';
+      ctx.font = fontSize + "px 'Share Tech Mono'";
+
+      for (let i = 0; i < drops.length; i++) {
+        const t = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(t, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    // OPTIMASI: Kecepatan hujan matrix dari 50ms ke 90ms. Sangat melegakan GPU!
+    setInterval(drawMatrix, 90);
+    setTimeout(typeText, 350);
+  </script>
+</body>
+</html>
