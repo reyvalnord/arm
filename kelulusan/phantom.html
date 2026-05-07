@@ -265,7 +265,7 @@
 
       <div class="button-container">
         <button class="btn-cyber" id="checkBtn" onclick="checkResult()">Result Scan</button>
-        <button class="btn-cyber" onclick="window.open('point_0002.html', '_blank')">REPORT</button>
+        <button class="btn-cyber" onclick="window.open('../database.html', '_blank')">REPORT</button>
       </div>
 
       <div class="loading" id="loading" style="display:none;"></div>
@@ -345,7 +345,7 @@
               </div>
               <div class="detail-item">
                 <span class="detail-label">UNIT</span>
-                <span class="detail-value">${escapeHtml(data.unit || 'OMEGA')}</span>
+                <span class="detail-value">${escapeHtml(data.unit || 'PHANTOM')}</span>
               </div>
               ${message ? `<div class="system-message">${message}</div>` : ''}
             </div>
