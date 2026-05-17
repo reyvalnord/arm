@@ -416,7 +416,7 @@
         <input type="hidden" id="roleInput" value="">
 
         <div class="zoom-control">
-            <label for="zoomSlider">>> OPTICAL_ZOOM_LEVEL</label>
+            <label for="zoomSlider">>> ZOOM_PICTURE</label>
             <input type="range" id="zoomSlider" min="0.3" max="2" step="0.05" value="0.85">
         </div>
 
@@ -588,7 +588,7 @@
             return;
         }
         const link = document.createElement('a');
-        link.download = 'ID-JUNKOR.png';
+        link.download = 'ID-JUNIOR.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
