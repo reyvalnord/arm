@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk ID Generator - Cyber Alert Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        @font-face {
+            font-family: 'FontCustomGue';
+            src: url('font.otf') format('opentype'); 
+        }
+
+        :root {
+            --bg-color: #050208;
+            --cyan: #00d2ff;
+            --purple: #b800ff;
+            --red: #ff003c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: radial-gradient(circle at center, #110022 0%, var(--bg-color) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Scanline Efek */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%),
+                linear-gradient(90deg, rgba(255, 0, 60, 0.04), rgba(184, 0, 255, 0.03), rgba(0, 210, 255, 0.04));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .grid-flat {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 0, 60, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.12) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .preload-font {
+            font-family: 'FontCustomGue';
+            visibility: hidden;
+            position: absolute;
+            width: 0; height: 0;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 550px;
+            background: #0d0614; 
+            padding: 30px;
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+            position: relative;
+            z-index: 2;
+            margin: 20px 0;
+        }
+
+        .container::before, .container::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--cyan);
+            opacity: 0.8;
+        }
+        .container::before {
+            top: -2px; left: -2px; border-right: none; border-bottom: none;
+        }
+        .container::after {
+            bottom: -2px; right: -2px; border-left: none; border-top: none;
+            border-color: var(--red);
+        }
+
+        h2 { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 8px var(--cyan);
+            border-bottom: 1px dashed rgba(0, 210, 255, 0.2);
+            padding-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .file-upload-btn {
+            background-color: #120a1c;
+            color: var(--cyan);
+            border: 1px solid rgba(0, 210, 255, 0.5);
+            padding: 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; 
+            max-width: 100%;
+        }
+        
+        .file-upload-btn:hover, .custom-select-trigger:hover, .custom-select-wrapper.open .custom-select-trigger {
+            background-color: rgba(0, 210, 255, 0.1);
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        input[type="file"] { display: none; }
+
+        /* --- CUSTOM DROPDOWN --- */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+        .custom-select-trigger {
+            background-color: #120a1c;
+            color: var(--cyan);
+            border: 1px solid rgba(0, 210, 255, 0.5);
+            padding: 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .custom-select-trigger::after {
+            content: "▼";
+            font-size: 11px;
+            color: var(--cyan);
+        }
+        .custom-options {
+            position: absolute;
+            display: block;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #120a1c;
+            border: 1px solid var(--cyan);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-5px);
+            transition: all 0.2s ease;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .custom-select-wrapper.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        .custom-option {
+            padding: 12px;
+            font-size: 15px;
+            color: #b0a2c0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px dashed rgba(0, 210, 255, 0.1);
+        }
+        .custom-option:last-child { border-bottom: none; }
+        .custom-option:hover, .custom-option.selected {
+            background-color: rgba(0, 210, 255, 0.15);
+            color: var(--cyan);
+            padding-left: 20px;
+        }
+
+        /* --- SLIDER ZOOM --- */
+        .zoom-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(184, 0, 255, 0.03);
+            padding: 12px;
+            border: 1px solid rgba(184, 0, 255, 0.2);
+            border-radius: 4px;
+        }
+        .zoom-control label {
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: var(--cyan);
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--cyan);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #251833;
+            border-radius: 2px;
+        }
+
+        /* --- STYLING TOMBOL INTERAKSI (CLIP PATH) --- */
+        .download-btn, .back-btn {
+            appearance: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            padding: 14px;
+            transition: all 0.2s ease;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        .download-btn {
+            background: rgba(0, 210, 255, 0.05);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            margin-top: 5px;
+        }
+        .download-btn:hover {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--cyan);
+        }
+
+        .back-btn {
+            background: rgba(255, 0, 60, 0.05);
+            border: 1px solid var(--red);
+            color: var(--red);
+            margin-top: 5px;
+        }
+        .back-btn:hover {
+            background: var(--red);
+            color: #000;
+            box-shadow: 0 0 15px var(--red);
+            border-color: #fff;
+        }
+
+        /* --- KANVAS FLAT --- */
+        .canvas-container {
+            width: 100%;
+            margin-top: 25px;
+        }
+        canvas {
+            width: 100%;
+            max-width: 1080px;
+            height: auto;
+            aspect-ratio: 1 / 1; 
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            background-color: #000;
+            border-radius: 4px;
+        }
+
+        /* --- STYLING CUSTOM CYBER ALERT MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 2, 8, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .cyber-modal {
+            background: #0d0614;
+            border: 1px solid var(--red);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 450px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.3);
+            position: relative;
+        }
+        .modal-warning-tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 0, 60, 0.15);
+            border: 1px solid var(--red);
+            color: var(--red);
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .cyber-modal p {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+        .modal-close-btn {
+            appearance: none;
+            background: rgba(255, 0, 60, 0.05);
+            border: 1px solid var(--red);
+            color: var(--red);
+            padding: 12px 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        .modal-close-btn:hover {
+            background: var(--red);
+            color: #000;
+            box-shadow: 0 0 15px var(--red);
+            border-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-flat"></div>
+
+<div class="preload-font">PRELOAD FONT</div>
+
+<div class="modal-overlay" id="errorModal">
+    <div class="cyber-modal">
+        <div class="modal-warning-tag">CRITICAL_SYSTEM_ERROR</div>
+        <p id="modalErrorMessage">SYSTEM ERROR: IMAGE_NOT_FOUND</p>
+        <button class="modal-close-btn" id="modalCloseBtn">>> BACK</button>
+    </div>
+</div>
+
+<div class="container">
+    <h2>ID_GENERATOR</h2>
+    
+    <div class="controls">
+        <label for="upload" class="file-upload-btn" id="uploadLabel">
+            >> UPLOAD_IMAGE
+        </label>
+        <input type="file" id="upload" accept="image/*">
+        
+        <div class="custom-select-wrapper" id="customSelectWrapper">
+            <div class="custom-select-trigger" id="customSelectTrigger">Select Position</div>
+            <div class="custom-options">
+                <div class="custom-option" data-value="Commander">Commander</div>
+                <div class="custom-option" data-value="Chief">Chief</div>
+                <div class="custom-option" data-value="V-Engineer">V-Engineer</div>
+                <div class="custom-option" data-value="Codebreker">Codebreker</div>
+                <div class="custom-option" data-value="Architect">Architect</div>
+                <div class="custom-option" data-value="Cipher">Cipher</div>
+            </div>
+        </div>
+        <input type="hidden" id="roleInput" value="">
+
+        <div class="zoom-control">
+            <label for="zoomSlider">>> OPTICAL_ZOOM_LEVEL</label>
+            <input type="range" id="zoomSlider" min="0.3" max="2" step="0.05" value="0.85">
+        </div>
+
+        <button id="downloadBtn" class="download-btn">COMPILE & DOWNLOAD</button>
+        <button class="back-btn" onclick="window.location.href='os2.html'">>> RETURN TO OS</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas" width="1080" height="1080"></canvas>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const templateImg = new Image();
+    templateImg.src = 'Template.png'; 
+    
+    let userImg = null;
+
+    const uploadInput = document.getElementById('upload');
+    const uploadLabel = document.getElementById('uploadLabel');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const roleInput = document.getElementById('roleInput');
+
+    // Element-element modal baru
+    const errorModal = document.getElementById('errorModal');
+    const modalErrorMessage = document.getElementById('modalErrorMessage');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    const customSelectWrapper = document.getElementById('customSelectWrapper');
+    const customSelectTrigger = document.getElementById('customSelectTrigger');
+    const customOptions = document.querySelectorAll('.custom-option');
+
+    // FUNGSI UNTUK MEMANGGIL POP-UP CYBERPUNK CUSTOM
+    function triggerCyberAlert(message) {
+        modalErrorMessage.innerText = message;
+        errorModal.classList.add('show');
+    }
+
+    // Event listener buat nutup modal custom
+    modalCloseBtn.addEventListener('click', () => {
+        errorModal.classList.remove('show');
+    });
+
+    customSelectTrigger.addEventListener('click', function() {
+        customSelectWrapper.classList.toggle('open');
+    });
+
+    for (const option of customOptions) {
+        option.addEventListener('click', function() {
+            const prevSelected = customSelectWrapper.querySelector('.custom-option.selected');
+            if (prevSelected) prevSelected.classList.remove('selected');
+            
+            this.classList.add('selected');
+            customSelectTrigger.innerText = this.innerText;
+            roleInput.value = this.getAttribute('data-value');
+            customSelectWrapper.classList.remove('open');
+            drawCanvas();
+        });
+    }
+
+    window.addEventListener('click', function(e) {
+        if (!customSelectWrapper.contains(e.target)) {
+            customSelectWrapper.classList.remove('open');
+        }
+    });
+
+    zoomSlider.addEventListener('input', drawCanvas);
+    
+    templateImg.onload = drawCanvas;
+    document.fonts.ready.then(drawCanvas);
+
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        uploadLabel.innerText = ">> TARGET: " + file.name;
+        uploadLabel.style.backgroundColor = "rgba(0, 210, 255, 0.1)";
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            userImg = new Image();
+            userImg.onload = () => {
+                zoomSlider.value = 0.85; 
+                drawCanvas();
+            };
+            userImg.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function drawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // LAYER 1: FOTO USER
+        if (userImg) {
+            ctx.save();
+            ctx.filter = 'grayscale(100%)'; 
+
+            const windowSizeTarget = canvas.width * 0.65;
+            const windowCenterXTarget = canvas.width * 0.35; 
+            const windowCenterYTarget = canvas.height * 0.65; 
+
+            const scaleWindow = Math.max(windowSizeTarget / userImg.width, windowSizeTarget / userImg.height);
+            const backwardFactor = parseFloat(zoomSlider.value); 
+            const finalScale = scaleWindow * backwardFactor;
+
+            const w = userImg.width * finalScale;
+            const h = userImg.height * finalScale;
+
+            const geserKeKanan = canvas.width * 0.02; 
+            const geserKeAtas = canvas.height * 0.08; 
+            
+            const finalCenterX = windowCenterXTarget + geserKeKanan;
+            const finalCenterY = windowCenterYTarget - geserKeAtas;
+
+            ctx.translate(finalCenterX, finalCenterY);
+
+            const derajatMiring = -4; 
+            ctx.rotate(derajatMiring * Math.PI / 180);
+
+            ctx.drawImage(userImg, -w / 2, -h / 2, w, h);
+            ctx.restore(); 
+        }
+
+        // LAYER 2: TEMPLATE BINGKAI
+        if (templateImg.complete && templateImg.naturalWidth !== 0) {
+            ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        // LAYER 3: TEKS CUSTOM FONT
+        const roleText = roleInput.value; 
+        
+        if (roleText !== "") {
+            ctx.save();
+            
+            const fontSize = Math.floor(canvas.width * 0.12); 
+            ctx.font = fontSize + 'px "FontCustomGue"'; 
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const textPosX = canvas.width * 0.65; 
+            const textPosY = (canvas.height * 0.88) - 2; 
+            
+            ctx.translate(textPosX, textPosY);
+            ctx.rotate(-8 * Math.PI / 180); 
+            
+            ctx.strokeStyle = '#000000'; 
+            ctx.lineWidth = 13; 
+            ctx.lineJoin = 'round'; 
+            ctx.strokeText(roleText, 0, 0); 
+            
+            ctx.fillStyle = '#FFFFFF'; 
+            ctx.fillText(roleText, 0, 0); 
+            
+            ctx.restore();
+        }
+    }
+
+    downloadBtn.addEventListener('click', () => {
+        if (!userImg) {
+            // PAKAI CUSTOM ALERT DISINI
+            triggerCyberAlert('SYSTEM ERROR: IMAGE_NOT_FOUND');
+            return;
+        }
+        const link = document.createElement('a');
+        link.download = 'ID-JUNKOR.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+</script>
+</body>
+</html>
