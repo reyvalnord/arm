@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>Spotify Playlist</title>
+  <style>
+    :root{
+      --bg: #0c0e12;
+      --bg-2: #12151b;
+      --surface: rgba(255,255,255,.05);
+      --surface-2: rgba(255,255,255,.08);
+      --surface-3: rgba(255,255,255,.11);
+      --text: #f3f4f6;
+      --muted: rgba(243,244,246,.72);
+      --muted-2: rgba(243,244,246,.5);
+      --accent: #1db954;
+      --accent-2: #2ad96b;
+      --border: rgba(255,255,255,.08);
+      --shadow: 0 18px 50px rgba(0,0,0,.32);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --font: Inter, Circular, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        linear-gradient(180deg, #0a0d11 0%, var(--bg) 45%, #090b0f 100%);
+      overflow: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .app{
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      overflow:hidden;
+    }
+
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(10,13,17,.84);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-shrink:0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .brand-mark{
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(29,185,84,.95), rgba(46,230,107,.7));
+      display:grid;
+      place-items:center;
+      box-shadow: 0 10px 25px rgba(29,185,84,.25);
+      flex: 0 0 auto;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size: 18px;
+      line-height:1.1;
+      letter-spacing: -.03em;
+    }
+
+    .brand p{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .search{
+      position:relative;
+      min-width: min(42vw, 360px);
+      max-width: 100%;
+      flex: 1 1 240px;
+    }
+
+    .search input{
+      width:100%;
+      height:44px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 0 16px 0 44px;
+      outline:none;
+      transition: .2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .search input:focus{
+      border-color: rgba(29,185,84,.45);
+      background: rgba(255,255,255,.07);
+      box-shadow: 0 0 0 4px rgba(29,185,84,.12);
+    }
+
+    .search svg{
+      position:absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height:18px;
+      fill: var(--muted);
+      pointer-events:none;
+    }
+
+    .btn, .btn-ghost{
+      height:44px;
+      border:none;
+      border-radius: 999px;
+      padding: 0 16px;
+      cursor:pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+
+    .btn{
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #06120a;
+      font-weight: 800;
+      box-shadow: 0 12px 24px rgba(29,185,84,.18);
+    }
+
+    .btn:hover, .btn-ghost:hover, .chip:hover, .playlist-card:hover, .track-row:hover{
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost{
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .upload-btn-wrapper{
+      position:relative;
+      overflow:hidden;
+      display:inline-flex;
+    }
+
+    .upload-btn-wrapper input[type=file]{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      cursor:pointer;
+    }
+
+    .layout{
+      display:flex;
+      flex:1;
+      overflow:hidden;
+      min-height:0;
+    }
+
+    .sidebar{
+      width: 300px;
+      flex:0 0 auto;
+      padding: 14px;
+      overflow:auto;
+      border-right: 1px solid var(--border);
+      background: rgba(6,10,14,.45);
+      backdrop-filter: blur(14px);
+    }
+
+    .sidebar::-webkit-scrollbar,
+    .content::-webkit-scrollbar{
+      width: 10px;
+      height:10px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb,
+    .content::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.22);
+      border-radius: 999px;
+    }
+
+    .section-label{
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 8px 10px 12px;
+    }
+
+    .playlist-card{
+      padding: 14px 14px 13px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      cursor:pointer;
+      border: 1px solid transparent;
+      transition: .18s ease;
+      margin-bottom: 8px;
+    }
+
+    .playlist-card.active{
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .playlist-card-title{
+      font-weight: 700;
+      font-size: 14px;
+      line-height:1.25;
+      margin:0 0 6px;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+    }
+
+    .playlist-card-meta{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .content{
+      flex:1;
+      min-width:0;
+      overflow:auto;
+      position:relative;
+    }
+
+    .hero{
+      position:relative;
+      padding: 28px 28px 18px;
+      border-bottom: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.44)),
+        var(--hero-bg, linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)));
+    }
+
+    .hero-grid{
+      display:flex;
+      align-items:flex-end;
+      gap:24px;
+      flex-wrap:wrap;
+    }
+
+    .cover{
+      width: 220px;
+      aspect-ratio: 1;
+      border-radius: 22px;
+      overflow:hidden;
+      flex: 0 0 auto;
+      box-shadow: 0 16px 40px rgba(0,0,0,.42);
+      background:
+        linear-gradient(135deg, rgba(29,185,84,.95), rgba(18,24,33,1));
+      position:relative;
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .cover img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .cover-fallback{
+      width: 42%;
+      height: 42%;
+      opacity:.22;
+    }
+
+    .info{
+      min-width: 0;
+      flex: 1 1 320px;
+      padding-bottom: 4px;
+    }
+
+    .eyebrow{
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.78);
+      margin-bottom: 10px;
+    }
+
+    .title{
+      margin: 0;
+      font-size: clamp(32px, 6vw, 72px);
+      line-height: .95;
+      letter-spacing: -.05em;
+      text-wrap: balance;
+    }
+
+    .desc{
+      margin: 14px 0 0;
+      color: rgba(255,255,255,.8);
+      max-width: 720px;
+      line-height:1.6;
+      font-size: 14px;
+    }
+
+    .stats{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 16px;
+      color: rgba(255,255,255,.9);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat-pill{
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,12,16,.78);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 72px;
+      z-index: 8;
+    }
+
+    .chip{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition: .18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+      font-size: 13px;
+    }
+
+    .chip svg{ width:16px; height:16px; fill: currentColor; opacity:.8; }
+
+    .chip.active{
+      background: rgba(29,185,84,.16);
+      border-color: rgba(29,185,84,.34);
+      color: #d7ffe2;
+    }
+
+    .tracks{
+      padding: 6px 16px 24px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.035);
+      box-shadow: 0 16px 40px rgba(0,0,0,.42);
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    thead th{
+      text-align:left;
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform:uppercase;
+      color: var(--muted-2);
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      z-index: 2;
+    }
+
+    tbody td{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: middle;
+      color: var(--muted);
+    }
+
+    tbody tr:last-child td{ border-bottom:none; }
+
+    .track-row{
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .track-row:hover{
+      background: rgba(255,255,255,.04);
+    }
+
+    .index{
+      width: 56px;
+      color: rgba(255,255,255,.45);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .track-main{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+
+    .thumb{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      overflow:hidden;
+      flex: 0 0 auto;
+      background: rgba(255,255,255,.07);
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .track-text{
+      min-width:0;
+    }
+
+    .track-name{
+      display:block;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      line-height:1.35;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-artist, .track-album, .track-date{
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .track-link:hover{
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .track-link svg{
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      opacity: .8;
+      flex: 0 0 auto;
+    }
+
+    .empty{
+      min-height: 100%;
+      display:grid;
+      place-items:center;
+      padding: 36px 24px;
+      text-align:center;
+      color: var(--muted);
+    }
+
+    .empty-box{
+      width:min(100%, 680px);
+      padding: 34px 24px;
+      border: 1px dashed rgba(255,255,255,.14);
+      border-radius: 28px;
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,.42);
+    }
+
+    .empty-box h2{
+      margin: 14px 0 10px;
+      color: var(--text);
+      font-size: 24px;
+      letter-spacing: -.03em;
+    }
+
+    .empty-box p{
+      margin: 0 auto;
+      max-width: 540px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .no-results{
+      padding: 18px 16px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hint{
+      margin-top: 16px;
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .mobile-only{ display:none; }
+
+    @media (max-width: 900px){
+      body{ overflow:auto; }
+      .app{ height:auto; min-height:100vh; }
+      .layout{ flex-direction: column; overflow: visible; }
+      .sidebar{
+        width:100%;
+        border-right:none;
+        border-bottom: 1px solid var(--border);
+        overflow:auto hidden;
+        white-space:nowrap;
+        padding: 12px 12px 14px;
+      }
+      .sidebar-inner{
+        display:flex;
+        gap:10px;
+        align-items:stretch;
+      }
+      .section-label{ margin: 4px 8px 10px; }
+      .playlist-card{
+        margin:0;
+        min-width: 180px;
+        display:inline-flex;
+        flex-direction:column;
+        justify-content:center;
+        background: rgba(255,255,255,.04);
+      }
+      .playlist-card-title{
+        -webkit-line-clamp: 1;
+      }
+      .content{
+        overflow: visible;
+      }
+      .toolbar{
+        top: 0;
+      }
+      table{ min-width: 680px; }
+    }
+
+    @media (max-width: 768px){
+      .topbar{
+        padding: 12px;
+        gap:12px;
+      }
+      .brand-mark{
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+      }
+      .brand h1{ font-size: 16px; }
+      .brand p{ display:none; }
+      .search{
+        min-width: 100%;
+        flex-basis: 100%;
+        order: 3;
+      }
+      .top-actions{
+        width:100%;
+        justify-content:stretch;
+      }
+      .top-actions .btn,
+      .top-actions .btn-ghost{
+        flex: 1 1 auto;
+      }
+      .hero{ padding: 20px 14px 14px; }
+      .hero-grid{
+        gap:16px;
+      }
+      .cover{
+        width: 138px;
+        border-radius: 18px;
+      }
+      .title{
+        font-size: clamp(28px, 9vw, 44px);
+      }
+      .desc{ font-size: 13px; }
+      .toolbar{
+        padding: 12px 14px;
+        gap:8px;
+      }
+      .chip{
+        padding: 9px 12px;
+        font-size: 12px;
+      }
+      .tracks{ padding: 8px 10px 20px; }
+      .table-wrap{
+        border-radius: 18px;
+      }
+      table{ min-width: 100%; }
+      thead{ display:none; }
+      tbody tr{
+        display:block;
+      }
+      tbody td{
+        display:block;
+        border-bottom: none;
+        padding: 10px 14px;
+      }
+      .track-row{
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+      .index{
+        display:none;
+      }
+      .track-main{
+        gap:12px;
+      }
+      .track-album,
+      .track-date{
+        font-size: 12px;
+      }
+      .desktop-only{ display:none; }
+      .mobile-only{ display:block; }
+    }
+  </style>
+
+
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#06120a">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.24 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.781-.18-.6.18-1.2.78-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.54-1.02.72-1.56.42z"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Spotify Playlist</h1>
+          <p>Upload JSON playlist, buka track dengan link Spotify yang benar.</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 105.292 14.001l4.353 4.353 1.414-1.414-4.353-4.353A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/></svg>
+          <input id="searchInput" type="search" placeholder="Cari playlist atau lagu..." autocomplete="off" />
+        </div>
+
+        <div class="upload-btn-wrapper">
+          <button class="btn">Upload JSON</button>
+          <input type="file" id="fileInput" accept=".json,application/json" />
+        </div>
+
+        <button class="btn-ghost" id="resetBtn" type="button">Reset</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="section-label">Playlists</div>
+        <div class="sidebar-inner" id="sidebarInner">
+          <div class="empty" style="min-height:auto; padding:18px 6px 8px;">
+            <div style="max-width: 260px; text-align:left;">
+              <strong style="color:var(--text); display:block; margin-bottom:6px;">Belum ada data.</strong>
+              <div style="font-size:13px; line-height:1.55;">Silakan upload file JSON playlist di kanan atas.</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content" id="mainContent">
+        <div class="empty">
+          <div class="empty-box">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="rgba(255,255,255,.5)">
+              <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+            </svg>
+            <h2>Belum ada playlist yang diputar</h2>
+            <p>Setelah file JSON diupload, playlist akan tampil di sidebar. Klik salah satu untuk membuka detail lagu, lalu klik judul track untuk menuju Spotify yang benar.</p>
+            <div class="hint">Format yang didukung: file JSON dengan key <b>playlists</b>.</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let playlistsData = [];
+    let filteredIndexes = [];
+    let currentIndex = 0;
+    let currentQuery = '';
+
+    const coverGradients = [
+      "linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03))",
+      "linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.02))",
+      "linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04))",
+      "linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02))",
+      "linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03))",
+      "linear-gradient(135deg, rgba(255,255,255,.11), rgba(255,255,255,.04))"
+    ];
+
+    const elFile = document.getElementById('fileInput');
+    const elSidebarInner = document.getElementById('sidebarInner');
+    const elMain = document.getElementById('mainContent');
+    const elSearch = document.getElementById('searchInput');
+    const elReset = document.getElementById('resetBtn');
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function safeText(value, fallback = '-') {
+      const text = value == null || value === '' ? fallback : String(value);
+      return escapeHtml(text);
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function normalizeSpotifyUrl(uri) {
+      if (!uri) return null;
+      const value = String(uri).trim();
+      if (/^https?:\/\//i.test(value)) return value;
+      const match = value.match(/^spotify:(track|album|playlist|artist):([A-Za-z0-9]+)$/i);
+      if (match) {
+        return `https://open.spotify.com/${match[1].toLowerCase()}/${match[2]}`;
+      }
+      return value;
+    }
+
+    function getTrackUrl(track) {
+      return normalizeSpotifyUrl(
+        track?.trackUri ||
+        track?.uri ||
+        track?.spotifyUri ||
+        track?.externalUrl ||
+        track?.url
+      );
+    }
+
+    function getTrackImage(track) {
+      const candidates = [
+        track?.imageUrl,
+        track?.albumImageUrl,
+        track?.artwork,
+        track?.album?.images?.[0]?.url,
+        track?.images?.[0]?.url,
+        track?.album?.imageUrl
+      ];
+      return candidates.find(Boolean) || '';
+    }
+
+    function getPlaylistImage(playlist) {
+      const candidates = [
+        playlist?.imageUrl,
+        playlist?.images?.[0]?.url,
+        playlist?.coverUrl,
+        playlist?.coverImage,
+        playlist?.image,
+      ];
+      return candidates.find(Boolean) || '';
+    }
+
+    function getTrackCount(playlist) {
+      return Array.isArray(playlist?.items) ? playlist.items.length : 0;
+    }
+
+    function getQuery() {
+      return elSearch.value.trim().toLowerCase();
+    }
+
+    function matchesTrack(track, query) {
+      if (!query) return true;
+      const fields = [
+        track?.trackName,
+        track?.artistName,
+        track?.albumName,
+        track?.trackUri,
+        track?.uri,
+        track?.spotifyUri,
+        track?.externalUrl,
+        track?.name,
+        track?.artists?.map(a => a?.name).filter(Boolean).join(' ')
+      ];
+      return fields.some(v => String(v ?? '').toLowerCase().includes(query));
+    }
+
+    function matchesPlaylist(playlist, query) {
+      if (!query) return true;
+      if (String(playlist?.name ?? '').toLowerCase().includes(query)) return true;
+      if (String(playlist?.description ?? '').toLowerCase().includes(query)) return true;
+      return (playlist?.items || []).some(item => matchesTrack(item?.track || {}, query));
+    }
+
+    function renderSidebar() {
+      const query = getQuery();
+      currentQuery = query;
+
+      filteredIndexes = playlistsData
+        .map((pl, index) => ({ pl, index }))
+        .filter(({ pl }) => matchesPlaylist(pl, query))
+        .map(v => v.index);
+
+      if (!filteredIndexes.length) {
+        elSidebarInner.innerHTML = `
+          <div class="empty" style="min-height:auto; padding:18px 8px 8px;">
+            <div style="max-width: 260px; text-align:left;">
+              <strong style="color:var(--text); display:block; margin-bottom:6px;">Tidak ada hasil.</strong>
+              <div style="font-size:13px; line-height:1.55;">Coba kata kunci lain untuk mencari playlist atau lagu.</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const html = filteredIndexes.map((index) => {
+        const playlist = playlistsData[index];
+        const trackCount = getTrackCount(playlist);
+        const followerText = playlist?.numberOfFollowers ? `• ${playlist.numberOfFollowers.toLocaleString('id-ID')} likes` : '';
+        return `
+          <div class="playlist-card ${index === currentIndex ? 'active' : ''}" data-index="${index}" role="button" tabindex="0">
+            <div class="playlist-card-title">${safeText(playlist?.name || `Playlist ${index + 1}`)}</div>
+            <div class="playlist-card-meta">
+              <span>${trackCount} lagu</span>
+              ${followerText ? `<span>${followerText}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      elSidebarInner.innerHTML = html;
+      elSidebarInner.querySelectorAll('.playlist-card').forEach(card => {
+        const index = Number(card.dataset.index);
+        card.addEventListener('click', () => renderPlaylist(index));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            renderPlaylist(index);
+          }
+        });
+      });
+    }
+
+    function renderPlaylist(index) {
+      if (!playlistsData[index]) return;
+      currentIndex = index;
+      const playlist = playlistsData[index];
+      const query = getQuery();
+
+      renderSidebar();
+
+      const trackCount = getTrackCount(playlist);
+      const imageUrl = getPlaylistImage(playlist);
+      const bgGradient = coverGradients[index % coverGradients.length];
+      const description = playlist?.description ? `<p class="desc">${safeText(playlist.description)}</p>` : '<p class="desc">Playlist ini belum memiliki deskripsi.</p>';
+      const followers = playlist?.numberOfFollowers ? playlist.numberOfFollowers.toLocaleString('id-ID') : '0';
+
+      const visibleItems = (playlist?.items || []).filter(Boolean).filter(item => {
+        if (!query) return true;
+        return matchesTrack(item?.track || {}, query);
+      });
+
+      const rows = visibleItems.map((item, i) => {
+        const track = item?.track || {};
+        const url = getTrackUrl(track);
+        const dateAdded = formatDate(item?.addedDate || item?.added_at || item?.dateAdded);
+        const trackImage = getTrackImage(track);
+        const trackName = track?.trackName || track?.name || `Track ${i + 1}`;
+        const artistName = track?.artistName || track?.artists?.map(a => a?.name).filter(Boolean).join(', ') || '-';
+        const albumName = track?.albumName || track?.album?.name || '-';
+
+        const titleHtml = url
+          ? `<a class="track-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+               <span>${safeText(trackName)}</span>
+               <svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6V3H3v8h2V5zm14 14h-6v2h8v-8h-2v6z"></path></svg>
+             </a>`
+          : `<span>${safeText(trackName)}</span>`;
+
+        return `
+          <tr class="track-row">
+            <td class="index">${i + 1}</td>
+            <td>
+              <div class="track-main">
+                <div class="thumb">
+                  ${trackImage ? `<img src="${escapeHtml(trackImage)}" alt="">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M12 3v9.37A3.96 3.96 0 0 0 10 12a4 4 0 1 0 4 4V8h4V3h-6z"></path></svg>`}
+                </div>
+                <div class="track-text">
+                  <div class="track-name">${titleHtml}</div>
+                  <div class="track-artist">${safeText(artistName)}</div>
+                  <div class="mobile-only" style="margin-top:4px;">
+                    <div class="track-album">${safeText(albumName)}</div>
+                    <div class="track-date">Ditambahkan ${safeText(dateAdded)}</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desktop-only track-album">${safeText(albumName)}</td>
+            <td class="desktop-only track-date">${safeText(dateAdded)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      elMain.style.setProperty('--hero-bg', imageUrl
+        ? `linear-gradient(180deg, rgba(0,0,0,.26), rgba(9,11,15,.92)), url('${imageUrl.replace(/'/g, '%27')}') center/cover no-repeat`
+        : bgGradient
+      );
+
+      elMain.innerHTML = `
+        <section class="hero">
+          <div class="hero-grid">
+            <div class="cover">
+              ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${safeText(playlist?.name || 'Playlist cover')}" onerror="this.remove();this.parentElement.querySelector('.cover-fallback')?.removeAttribute('hidden')">` : ''}
+              <svg class="cover-fallback" viewBox="0 0 24 24" fill="rgba(255,255,255,.78)" ${imageUrl ? 'hidden' : ''}>
+                <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+              </svg>
+            </div>
+            <div class="info">
+              <div class="eyebrow">Public Playlist</div>
+              <h2 class="title">${safeText(playlist?.name || 'Untitled Playlist')}</h2>
+              ${description}
+              <div class="stats">
+                <span class="stat-pill">Spotify</span>
+                <span class="stat-pill">${safeText(followers)} likes</span>
+                <span class="stat-pill">${trackCount} lagu</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="toolbar">
+          <button class="chip active" type="button">
+            <svg viewBox="0 0 24 24"><path d="M7 6h14v2H7V6zm0 5h14v2H7v-2zm0 5h14v2H7v-2zM3 6h2v2H3V6zm0 5h2v2H3v-2zm0 5h2v2H3v-2z"></path></svg>
+            Lagu
+          </button>
+          <button class="chip" type="button" id="copyInfoBtn">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm4 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h12v14z"></path></svg>
+            Salin judul
+          </button>
+        </div>
+
+        <div class="tracks">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:56px;">#</th>
+                  <th>Title</th>
+                  <th style="width:28%;">Album</th>
+                  <th style="width:20%;">Date Added</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows || `<tr><td colspan="4" style="text-align:center; padding: 34px 16px; color: var(--muted);">Tidak ada lagu yang cocok dengan pencarian ini.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      const copyBtn = document.getElementById('copyInfoBtn');
+      copyBtn?.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(playlist?.name || '');
+          copyBtn.textContent = 'Tersalin';
+        } catch {
+          copyBtn.textContent = 'Gagal';
+        }
+        setTimeout(() => renderPlaylist(index), 850);
+      });
+
+      const activeCard = elSidebarInner.querySelector(`.playlist-card[data-index="${index}"]`);
+      if (activeCard && window.innerWidth <= 900) {
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    function loadData(raw) {
+      const data = JSON.parse(raw);
+      const playlists = Array.isArray(data?.playlists) ? data.playlists : null;
+      if (!playlists) {
+        throw new Error('Format JSON tidak sesuai. Key "playlists" tidak ditemukan.');
+      }
+      playlistsData = playlists;
+      currentIndex = 0;
+      elSearch.value = '';
+      renderSidebar();
+      if (playlistsData.length) {
+        renderPlaylist(0);
+      } else {
+        elMain.innerHTML = `
+          <div class="empty">
+            <div class="empty-box">
+              <h2>Playlist kosong</h2>
+              <p>File berhasil dibaca, tetapi tidak ada playlist di dalamnya.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    elFile.addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          loadData(String(e.target.result || ''));
+        } catch (error) {
+          alert(error?.message || 'Terjadi kesalahan saat membaca file JSON.');
+        }
+      };
+      reader.onerror = () => alert('File tidak dapat dibaca.');
+      reader.readAsText(file);
+    });
+
+    elSearch.addEventListener('input', () => {
+      if (!playlistsData.length) return;
+      renderSidebar();
+
+      if (filteredIndexes.length) {
+        const keep = filteredIndexes.includes(currentIndex);
+        if (!keep) currentIndex = filteredIndexes[0];
+        renderPlaylist(currentIndex);
+      } else {
+        elMain.innerHTML = `
+          <div class="empty">
+            <div class="empty-box">
+              <h2>Tidak ada hasil</h2>
+              <p>Silakan ubah kata kunci pencarian untuk menemukan playlist atau lagu.</p>
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    elReset.addEventListener('click', () => {
+      playlistsData = [];
+      filteredIndexes = [];
+      currentIndex = 0;
+      currentQuery = '';
+      elSearch.value = '';
+      elFile.value = '';
+      elSidebarInner.innerHTML = `
+        <div class="empty" style="min-height:auto; padding:18px 6px 8px;">
+          <div style="max-width: 260px; text-align:left;">
+            <strong style="color:var(--text); display:block; margin-bottom:6px;">Belum ada data.</strong>
+            <div style="font-size:13px; line-height:1.55;">Silakan upload file JSON playlist di kanan atas.</div>
+          </div>
+        </div>
+      `;
+      elMain.innerHTML = `
+        <div class="empty">
+          <div class="empty-box">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="rgba(255,255,255,.5)">
+              <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+            </svg>
+            <h2>Belum ada playlist yang diputar</h2>
+            <p>Setelah file JSON diupload, playlist akan tampil di sidebar.</p>
+            <div class="hint">Format yang didukung: file JSON dengan key <b>playlists</b>.</div>
+          </div>
+        </div>
+      `;
+    });
+
+    window.addEventListener('resize', () => {
+      if (playlistsData.length) renderSidebar();
+    });
+  </script>
+</body>
+</html>
