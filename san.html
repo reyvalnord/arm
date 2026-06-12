@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SAN SEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-blue: #00d2ff;
+      --deep-blue: #002233;
+      --bg-black: #05080a;
+      --text-main: #b3e5fc;
+      --warning-color: #ffaa00;
+      --neon-glow: 0 0 10px rgba(0, 210, 255, 0.4), 0 0 20px rgba(0, 210, 255, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-main);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Efek CCTV Scanline */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        transparent, transparent 3px, rgba(0, 210, 255, 0.03) 4px, rgba(0, 210, 255, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Efek Grid Latar Belakang Digital */
+    .grid-3d {
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(600px) rotateX(60deg);
+      bottom: -50%; left: -50%;
+      z-index: -1;
+      animation: gridMove 15s linear infinite;
+    }
+
+    @keyframes gridMove {
+      from { background-position: 0 0; }
+      to { background-position: 0 400px; }
+    }
+
+    header {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+      background: linear-gradient(to bottom, rgba(0, 34, 51, 0.9), transparent);
+      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+    }
+
+    .sys-tag {
+      font-size: 11px;
+      color: rgba(0, 210, 255, 0.7);
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+
+    .hud-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      text-shadow: var(--neon-glow);
+      margin-bottom: 0.8rem;
+    }
+
+    .level-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #fff;
+      background: rgba(0, 210, 255, 0.15);
+      border: 1px solid var(--neon-blue);
+      padding: 4px 16px;
+      box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.2);
+    }
+
+    .main-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px 20px 50px;
+    }
+
+    .briefing-panel {
+      background: rgba(0, 34, 51, 0.6);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      border-left: 4px solid var(--neon-blue);
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .briefing-panel::before {
+      content: '// OVERRIDE BRIEFING';
+      display: block;
+      font-size: 11px;
+      color: var(--neon-blue);
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .briefing-panel p { 
+      font-size: 14px; 
+      line-height: 1.8; 
+      color: #e0f7fa; 
+    }
+    
+    .briefing-panel .warning { 
+      color: var(--warning-color); 
+      margin-top: 12px; 
+      font-size: 13px; 
+      border-top: 1px dashed rgba(255, 170, 0, 0.3);
+      padding-top: 10px;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: rgba(0, 210, 255, 0.8);
+      border-bottom: 1px dashed rgba(0, 210, 255, 0.3);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Susunan Dirubah Menjadi 2 Kolom */
+    .node-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 35px;
+    }
+
+    .node-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      padding: 14px 10px;
+      background: rgba(0, 34, 51, 0.4);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      color: var(--neon-blue);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .node-btn::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%; width: 3px;
+      background: var(--neon-blue);
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+
+    .node-btn:hover, .node-btn:active {
+      background: rgba(0, 210, 255, 0.15);
+      border-color: var(--neon-blue);
+      box-shadow: var(--neon-glow);
+      color: #fff;
+    }
+
+    .node-btn:hover::before {
+      width: 100%;
+      opacity: 0.1;
+    }
+
+    .node-btn .status {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 1px;
+      font-weight: normal;
+    }
+
+    /* MAP TOGGLE BUTTON */
+    .map-toggle-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 0;
+      background: rgba(0, 210, 255, 0.05);
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.1);
+    }
+
+    .map-toggle-btn:hover {
+      background: rgba(0, 210, 255, 0.2);
+      color: #fff;
+      box-shadow: var(--neon-glow);
+    }
+
+    /* MAP SECTION */
+    .map-section {
+      display: none;
+      margin-top: 0;
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      border-top: none;
+      background: rgba(0, 20, 30, 0.8);
+      padding: 24px 20px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .map-section.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform: translateY(-10px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .map-frame {
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+      position: relative;
+      margin-bottom: 20px;
+      padding: 5px;
+      background: #000;
+    }
+
+    .map-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: sepia(1) hue-rotate(180deg) saturate(2) brightness(0.8) contrast(1.2); 
+    }
+
+    .map-download-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 24px;
+      background: transparent;
+      border: 1px dashed rgba(0, 210, 255, 0.5);
+      color: rgba(0, 210, 255, 0.8);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .map-download-btn:hover {
+      background: rgba(0, 210, 255, 0.1);
+      color: var(--neon-blue);
+      border-color: var(--neon-blue);
+    }
+
+    /* DIRECTION BOX */
+    .direction-box {
+      background: rgba(0, 15, 25, 0.9);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-left: 3px solid var(--neon-blue);
+      padding: 20px;
+      position: relative;
+    }
+
+    .direction-box::before {
+      content: '// TACTICAL ROUTE INSTRUCTIONS';
+      display: block;
+      font-size: 10px;
+      color: rgba(0, 210, 255, 0.6);
+      letter-spacing: 3px;
+      margin-bottom: 15px;
+    }
+
+    .direction-box p {
+      font-size: 14px;
+      line-height: 2.2;
+      color: #b3e5fc;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .direction-box .dir-highlight {
+      color: #fff;
+      background: rgba(0, 210, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 210, 255, 0.4);
+    }
+
+    .sys-footer {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(0, 210, 255, 0.4);
+      letter-spacing: 2px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 210, 255, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-3d"></div>
+
+  <header>
+    <div class="sys-tag">ARM.SYS // UPLINK ESTABLISHED</div>
+    <h1 class="hud-title">INTERCEPT SEL</h1>
+    <div class="level-badge">ACCESS GRANTED: PENITENTIARY WING</div>
+  </header>
+
+  <div class="main-container">
+
+    <div class="briefing-panel">
+      <p>Koordinat ditemukan, target sudah mulai terlihat jelas. Di tempat ini, ketelitian adalah hal yang paling berharga.</p>
+      <p class="warning">⚠ PERINGATAN: Menghubungi narapidana yang salah akan memicu protokol isolasi dan menurunkan persentase keberhasilan secara drastis.</p>
+    </div>
+
+    <div class="section-label">>> PILIH SEL TARGET</div>
+
+    <div class="node-grid" id="nodeGrid"></div>
+
+    <button class="map-toggle-btn" onclick="toggleMap(this)">
+      ▶ LIHAT PETA NAVIGASI SEL
+    </button>
+
+    <div class="map-section" id="mapSection">
+      <div class="map-frame">
+        <img id="mapImg" src="" alt="Prison Floor Plan" />
+      </div>
+
+      <a class="map-download-btn" id="mapDownloadBtn" download="Map.jpg">
+        ⬇ UNDUH PETA // LOKAL
+      </a>
+
+      <div class="direction-box">
+        <p>
+          Dari tempatmu bermula, kau akan menghadap ke arah <span class="dir-highlight">matahari terbit</span>.
+          Jangan terlalu lama melamun, ambil arah ke <span class="dir-highlight">Utara</span> dan langsung belok kembali ke arah <span class="dir-highlight">Timur</span>.
+          Ikuti jalan yang ada, karena itu satu-satunya yang melindungimu di antara para narapidana itu.
+          Setelah menemukan jalan di antara <span class="dir-highlight">lurus ataupun kiri</span>, pilihlah jalan ke <span class="dir-highlight">Utara</span>.
+          Berjalanlah hingga menemukan tembok di hadapanmu yang mengarah ke arah <span class="dir-highlight">Barat atau Timur</span>, pilihlah arah <span class="dir-highlight">Timur</span>.
+          Tidak perlu berjalan terlalu jauh hingga buntu, segera ambil belokan di sana dan jalan lurus hingga terhalang tembok.
+          Bergeser sedikit, maju beberapa langkah dan ambil arah ke <span class="dir-highlight">Barat</span>.
+          Ikuti jalan dengan baik, di antara pilihan <span class="dir-highlight">Selatan dan Utara</span>, pilihlah <span class="dir-highlight">Selatan</span>.
+          Di sanalah tempat dia yang menyimpan informasi tersebut.
+        </p>
+      </div>
+    </div>
+
+    <div class="sys-footer">
+      ENCRYPTED RELAY // &copy; 2026 ARM AREA
+    </div>
+
+  </div>
+
+  <script>
+    // Memuat path gambar Peta
+    document.getElementById('mapImg').src = 'Map.jpg';
+    document.getElementById('mapDownloadBtn').href = 'Map.jpg';
+
+    // Daftar Sel
+    const nodes = [
+      { cell: '201', wa: '6283126017370' },
+      { cell: '211', wa: '6287711439117' },
+      { cell: '221', wa: '6289526435032' },
+      { cell: '231', wa: '6288801885219' },
+      { cell: '241', wa: '6281313922790' },
+      { cell: '251', wa: '6281314741130' },
+      { cell: '261', wa: '6289536525511' },
+      { cell: '271', wa: '6289536525112' },
+      { cell: '281', wa: '6288245680601' },
+      { cell: '291', wa: '6283157388487' },
+      { cell: '301', wa: '6281356027892' },
+      { cell: '311', wa: '6285122988414' },
+      { cell: '321', wa: '6285641941499' },
+      { cell: '331', wa: '6282130014749' },
+      { cell: '341', wa: '6285787957025' },
+      { cell: '351', wa: '6287852428383' },
+      { cell: '361', wa: '6282244011880' },
+    ];
+
+    const grid = document.getElementById('nodeGrid');
+    
+    // Generate tombol dalam susunan grid
+    nodes.forEach(node => {
+      const btn = document.createElement('a');
+      btn.href = `https://wa.me/${node.wa}`;
+      btn.target = '_blank';
+      btn.rel = 'noopener noreferrer';
+      btn.className = 'node-btn';
+      
+      // Menambahkan elemen teks sel dan status
+      btn.innerHTML = `
+        <span>BLOK SEL ${node.cell}</span>
+        <span class="status">[ KONEKSI TERSEDIA ]</span>
+      `;
+      grid.appendChild(btn);
+    });
+
+    // Fungsi buka tutup map
+    function toggleMap(btn) {
+      const sec = document.getElementById('mapSection');
+      const isOpen = sec.classList.toggle('visible');
+      btn.textContent = isOpen ? '▼ TUTUP PETA NAVIGASI' : '▶ LIHAT PETA NAVIGASI SEL';
+    }
+  </script>
+
+</body>
+</html>

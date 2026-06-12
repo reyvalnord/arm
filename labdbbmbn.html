@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SAN DECODER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #02040a;
+      --text-main: #a9bccc;
+      --color-cyan: #00f3ff;
+      --primary-color: var(--color-cyan);
+      --dim-ratio: rgba(0, 0, 0, 0.85);
+      --primary-rgb: 0, 243, 255;
+      --bg-rgb: 0, 26, 29;
+      --color-error: #ff003c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px; /* Font utama diperkecil dari 16px */
+      min-height: 100vh;
+      overflow-x: hidden;
+      perspective: 1000px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ARM Terminal Background Effects - from index */
+    body::before {
+      content: "";
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      transform: perspective(500px) rotateX(60deg);
+      bottom: -50%;
+      left: -50%;
+      z-index: -1;
+      animation: gridMove 10s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      from { background-position: 0 0; }
+      to   { background-position: 0 300px; }
+    }
+
+    .bg-container { display: none; }
+
+    /* Layout */
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      position: relative;
+    }
+
+    .hud-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem; /* Judul diperkecil dari 2.5rem */
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      text-shadow: 0 0 10px var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 25px;
+      width: 100%;
+    }
+
+    /* Cyber Panels */
+    section {
+      background: var(--dim-ratio);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      padding: 1.5rem 2rem;
+      position: relative;
+      backdrop-filter: blur(10px);
+      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+    }
+
+    section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15px;
+      width: 40px; height: 2px;
+      background: var(--primary-color);
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-size: 0.95rem; /* Sub-judul diperkecil dari 1.2rem */
+      letter-spacing: 2px;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      border-bottom: 1px dashed rgba(var(--primary-rgb), 0.3);
+      padding-bottom: 5px;
+      display: inline-block;
+    }
+
+    /* Binner Box */
+    .copy-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px dashed var(--primary-color);
+      padding: 12px;
+      margin-bottom: 10px;
+      text-align: justify;
+    }
+
+    .binary-text {
+      color: var(--primary-color);
+      font-size: 0.8rem; /* Teks biner diperkecil dari 1rem */
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    /* Input Matrix */
+    .input-array-panel {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 1rem 0;
+    }
+
+    /* ANIMASI GETAR (SHAKE) */
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake-anim {
+      animation: shakeError 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    /* TITIK NEON 12px */
+    .cyber-dot {
+      width: 12px;   /* Ukuran titik sedikit diperkecil */
+      height: 12px;  
+      border-radius: 50%;
+      border: 1.5px solid var(--primary-color);
+      background: transparent;
+      color: transparent;
+      text-align: center;
+      outline: none;
+      cursor: text;
+      transition: all 0.2s;
+      caret-color: transparent;
+    }
+
+    .cyber-dot.filled { 
+      background: var(--primary-color); 
+      box-shadow: 0 0 10px var(--primary-color); 
+    }
+
+    .error-dot { 
+      border-color: var(--color-error) !important; 
+      background: var(--color-error) !important; 
+      box-shadow: 0 0 10px var(--color-error) !important; 
+    }
+    
+    .success-dot { 
+      border-color: #00ff00 !important; 
+      background: #00ff00 !important; 
+      box-shadow: 0 0 10px #00ff00 !important; 
+    }
+
+    /* State Kunci (Lockout) */
+    .cyber-dot:disabled {
+      border-color: #333 !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .system-log {
+      font-size: 10px; /* Log paling bawah diperkecil */
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      margin-top: auto;
+      padding: 2rem 0;
+      letter-spacing: 1px;
+    }
+    
+    .secret-hint { 
+      text-align: center; 
+      margin-top: 10px; 
+      font-size: 10px; /* Hint teks diperkecil */
+      color: black; 
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    
+    .alert-text {
+      color: var(--color-error) !important;
+      text-shadow: 0 0 5px var(--color-error);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-container">
+    <div class="grid-3d"></div>
+  </div>
+
+  <header>
+    <div style="font-size: 9px; color: var(--primary-color); margin-bottom: 5px;">ARM.SYS // UPLINK ESTABLISHED</div>
+    <h1 class="hud-title">SAN DECODER</h1>
+    <div style="font-size: 10px; letter-spacing: 2px;">
+      MODULE: <span style="color: #fff; font-weight: bold;">HARDCODE_0.1</span>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>01 // Intercepted Data</h2>
+      <div class="copy-box">
+        <div class="binary-text">01000010 01010100 01011001 01001011 01011001 00100000 01010010 01000011 01010000 01001110 01011001 01001100 01001000 01011001 01001100 01000101 00100000 01001001 01011001 01010000 01010111 01011001 00100000 01000010 01010100 01011001 01001011 01011001 01010101 01011001 01001100 00100000 01010010 01000011 01010000 01000110 01000011 01011010 01011001 01010010 00100000 01010010 01000011 01010000 01011010 01011001 01001100 01000101 01010011 01001100 00100000 01001110 01010011 01001001 01010011 01001010 00100000 00002240 00002305 00002215 00002335 00002200 00002330 00002335 01000010 01000111 00100000 01010001 01011001 01001100 01011001</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>02 // Decryption Matrix</h2>
+      <div class="input-array-panel" id="decoderPanel">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+        <input type="text" maxlength="1" class="cyber-dot" autocomplete="off">
+      </div>
+      <div class="secret-hint" id="statusLog">[LOG] Jawabannya GLBRYQR</div>
+    </section>
+  </main>
+
+  <div class="system-log">ENCRYPTED CONNECTION // &copy; 2026 ARM AREA</div>
+
+  <script>
+    const panel = document.getElementById('decoderPanel');
+    const inputs = document.querySelectorAll('.cyber-dot');
+    const statusLog = document.getElementById('statusLog');
+    const originalLogText = statusLog.innerText;
+    
+    const correctAnswer = "GLBRYQR";
+    let isProcessing = false; 
+    let failedAttempts = 0; 
+    const maxAttempts = 3;  
+    const lockDuration = 5 * 60; 
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            if (isProcessing) {
+                input.value = '';
+                return;
+            }
+
+            input.value = input.value.toUpperCase(); 
+            
+            if (input.value) {
+                input.classList.add('filled');
+                if (index < inputs.length - 1) inputs[index + 1].focus();
+            } else {
+                input.classList.remove('filled');
+            }
+            checkSequence();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (isProcessing) return;
+            
+            if (e.key === 'Backspace' && input.value === '') {
+                input.classList.remove('filled');
+                if (index > 0) inputs[index - 1].focus();
+            }
+        });
+    });
+
+    function checkSequence() {
+        let currentString = Array.from(inputs).map(i => i.value).join("");
+        
+        if (currentString.length === inputs.length) {
+            isProcessing = true; 
+            
+            if (currentString === correctAnswer) {
+                inputs.forEach(i => i.classList.add('success-dot'));
+                statusLog.innerText = "[LOG] AKSES DITERIMA. MENGALIHKAN...";
+                statusLog.style.color = "#00ff00";
+                
+                setTimeout(() => {
+                    window.location.href = '../database.html';
+                }, 800); 
+                
+            } else {
+                failedAttempts++;
+                inputs.forEach(i => i.classList.add('error-dot'));
+                panel.classList.add('shake-anim');
+                
+                if (failedAttempts >= maxAttempts) {
+                    setTimeout(() => {
+                        triggerLockdown();
+                    }, 600);
+                } else {
+                    const attemptsLeft = maxAttempts - failedAttempts;
+                    statusLog.innerText = `[PERINGATAN] KATA SANDI SALAH. SISA PERCOBAAN: ${attemptsLeft}`;
+                    statusLog.classList.add('alert-text');
+
+                    setTimeout(() => {
+                        inputs.forEach(i => {
+                            i.value = '';
+                            i.classList.remove('filled', 'error-dot', 'success-dot');
+                        });
+                        panel.classList.remove('shake-anim');
+                        inputs[0].focus(); 
+                        isProcessing = false; 
+                    }, 600);
+                }
+            }
+        } else {
+            inputs.forEach(i => {
+                i.classList.remove('success-dot', 'error-dot');
+            });
+            panel.classList.remove('shake-anim');
+        }
+    }
+
+    function triggerLockdown() {
+        inputs.forEach(i => {
+            i.value = '';
+            i.classList.remove('filled', 'error-dot', 'success-dot');
+            i.disabled = true; 
+        });
+        panel.classList.remove('shake-anim');
+        
+        let timeLeft = lockDuration;
+
+        const countdownTimer = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            if (seconds < 10) seconds = '0' + seconds; 
+
+            statusLog.innerText = `[SISTEM TERKUNCI] COBA LAGI DALAM: ${minutes}:${seconds}`;
+            statusLog.classList.add('alert-text');
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownTimer);
+                unlockSystem();
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function unlockSystem() {
+        failedAttempts = 0; 
+        isProcessing = false;
+        
+        inputs.forEach(i => {
+            i.disabled = false;
+        });
+
+        statusLog.innerText = originalLogText;
+        statusLog.classList.remove('alert-text');
+        
+        inputs[0].focus(); 
+    }
+  </script>
+</body>
+</html>
