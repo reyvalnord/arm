@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>REPORT // VANGUARD-001</title>
+  <title>REPORT // GHOST-0011</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #ff0000;
+      --accent: #00cfff;
       --accent-glow: color-mix(in srgb, var(--accent) 30%, transparent);
       --accent-hover: color-mix(in srgb, var(--accent) 15%, transparent);
       --accent-bg: color-mix(in srgb, var(--accent) 5%, #050507);
@@ -57,7 +57,6 @@
       box-shadow: 0 10px 30px var(--accent-glow);
     }
 
-    /* UKURAN FONT JUDUL (PC/DESKTOP) DIPERKECIL DI SINI */
     .title-box h1 {
       font-size: 0.95rem; 
       font-weight: 800;
@@ -107,9 +106,10 @@
       text-align: center;
     }
 
-    th.col-name { width: 38%; }
-    th.col-val { width: 11.5%; }
-    th.col-total { width: 16%; }
+    th.col-name { width: 34%; }
+    th.col-val { width: 10%; } 
+    th.col-total { width: 14%; }
+    th.col-dl { width: 12%; }
 
     thead th {
       font-size: 0.7rem;
@@ -185,12 +185,44 @@
     tr.rank-2 td.name::before { color: #c0c0c0; font-weight: 800; font-size: 0.8rem; }
     tr.rank-3 td.name::before { color: #cd7f32; font-weight: 800; font-size: 0.8rem; }
 
+    .name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
     .name-text {
-      width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       display: block;
+      min-width: 0;
+    }
+
+    .badge-ketua {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      color: #1a1200;
+      font-family: var(--font-data);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      white-space: nowrap;
+    }
+
+    tr.is-ketua {
+      box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.4), 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    tr.is-ketua td.name {
+      border-left: 3px solid #ffd700 !important;
     }
 
     td.val {
@@ -208,6 +240,45 @@
       font-size: 0.85rem;
       min-width: 45px;
     }
+    
+    .btn-dl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 8px;
+      background: rgba(0, 207, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 207, 255, 0.4);
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-dl svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .btn-dl:hover {
+      background: var(--accent);
+      color: #050507;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .x-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      background: rgba(0, 207, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 207, 255, 0.4);
+      border-radius: 4px;
+      font-family: var(--font-data);
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
 
     .hide-col { display: none !important; }
 
@@ -224,7 +295,6 @@
       body { padding: 6px; }
       .header-card { padding: 12px 14px; border-radius: 8px; margin-bottom: 4px; }
       
-      /* UKURAN FONT JUDUL (HP/MOBILE) DIPERKECIL DI SINI */
       .title-box h1 { font-size: 0.75rem; } 
       .title-box .subtitle { font-size: 0.5rem; }
       
@@ -236,9 +306,10 @@
         border-spacing: 0 4px; 
       }
       
-      th.col-name { width: 40%; padding-left: 36px; } 
-      th.col-val { width: 11%; } 
-      th.col-total { width: 16%; } 
+      th.col-name { width: 35%; padding-left: 36px; } 
+      th.col-val { width: 10%; } 
+      th.col-total { width: 13%; } 
+      th.col-dl { width: 12%; }
       
       thead th {
         font-size: 0.55rem;
@@ -275,6 +346,30 @@
         min-width: unset;
         border-radius: 4px;
       }
+      
+      .btn-dl {
+        padding: 3px 6px;
+      }
+
+      .btn-dl svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .x-mark {
+        padding: 2px 8px;
+        font-size: 0.7rem;
+      }
+
+      .badge-ketua {
+        font-size: 0.55rem;
+        padding: 1px 5px;
+        gap: 2px;
+      }
+
+      .name-wrap {
+        gap: 4px;
+      }
     }
   </style>
 </head>
@@ -283,12 +378,12 @@
   <div class="container">
     <div class="header-card">
       <div class="title-box">
-        <h1>REPORT // VANGUARD-001</h1>
-        <div class="subtitle">DECRYPTED DATA OVERVIEW</div>
+        <h1>REPORT // GHOST-0011</h1>
+        <div class="subtitle">DECRYPTED DATA : ARCHIVE ARM</div>
       </div>
       <div class="stats-box">
         <div class="label">Total Agents</div>
-        <div class="value">2</div>
+        <div class="value">66</div>
       </div>
     </div>
 
@@ -299,40 +394,875 @@
             <th class="hide-col">Rank</th>
             <th class="hide-col">Code</th>
             <th class="col-name">Agent</th>
-            <th class="col-val">EZ</th>
+            <th class="col-val">BNS</th>
             <th class="col-val">MD</th>
             <th class="col-val">HD</th>
             <th class="col-val">EV</th>
             <th class="hide-col">Unit</th>
             <th class="hide-col">Gen</th>
             <th class="col-total">Total</th>
+            <th class="col-dl">CERT</th>
           </tr>
         </thead>
         <tbody>
-          
-          <tr class="rank-1">
+          <tr class="rank-1 is-ketua">
             <td class="hide-col">1</td>
-            <td class="hide-col code">11111</td>
-            <td class="name" data-rank="🏆 1"><div class="name-text">BAKSO BERANAK</div></td>
-            <td class="val">50</td>
-            <td class="val">50</td>
-            <td class="val">50</td>
-            <td class="val">50</td>
-            <td class="hide-col">VANGUARD-001</td>
+            <td class="hide-col code">GHST21</td>
+            <td class="name" data-rank="🥇"><div class="name-wrap"><div class="name-text">Lazaro</div><span class="badge-ketua">LEAD</span></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">77</td>
+            <td class="val">16</td>
+            <td class="hide-col">GHOST-0011</td>
             <td class="hide-col">1</td>
-            <td class="total"><span class="badge-total">200</span></td>
+            <td class="total"><span class="badge-total">153</span></td>
+            <td class="dl"><a href="0011/1.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
           </tr>
           <tr class="rank-2">
             <td class="hide-col">2</td>
-            <td class="hide-col code">10001</td>
-            <td class="name" data-rank="🥈 2"><div class="name-text">EDAMAME GORENG</div></td>
-            <td class="val">10</td>
-            <td class="val">10</td>
-            <td class="val">10</td>
-            <td class="val">10</td>
-            <td class="hide-col">VANGUARD-001</td>
+            <td class="hide-col code">GHST35</td>
+            <td class="name" data-rank="🥈"><div class="name-wrap"><div class="name-text">Sakunay</div></div></td>
+            <td class="val">20</td>
+            <td class="val">43</td>
+            <td class="val">67</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
             <td class="hide-col">2</td>
-            <td class="total"><span class="badge-total">40</span></td>
+            <td class="total"><span class="badge-total">145</span></td>
+            <td class="dl"><a href="0011/2.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="rank-3">
+            <td class="hide-col">3</td>
+            <td class="hide-col code">GHST48</td>
+            <td class="name" data-rank="🥉"><div class="name-wrap"><div class="name-text">Eirycho</div></div></td>
+            <td class="val">20</td>
+            <td class="val">42</td>
+            <td class="val">67</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">3</td>
+            <td class="total"><span class="badge-total">144</span></td>
+            <td class="dl"><a href="0011/3.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">4</td>
+            <td class="hide-col code">GHST50</td>
+            <td class="name" data-rank="4"><div class="name-wrap"><div class="name-text">Drigalz</div></div></td>
+            <td class="val">20</td>
+            <td class="val">42</td>
+            <td class="val">62</td>
+            <td class="val">19</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">4</td>
+            <td class="total"><span class="badge-total">143</span></td>
+            <td class="dl"><a href="0011/4.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">5</td>
+            <td class="hide-col code">GHST02</td>
+            <td class="name" data-rank="5"><div class="name-wrap"><div class="name-text">Rexvier</div></div></td>
+            <td class="val">25</td>
+            <td class="val">40</td>
+            <td class="val">67</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">5</td>
+            <td class="total"><span class="badge-total">142</span></td>
+            <td class="dl"><a href="0011/5.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">6</td>
+            <td class="hide-col code">GHST15</td>
+            <td class="name" data-rank="6"><div class="name-wrap"><div class="name-text">Keyya&#39;s</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">67</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">6</td>
+            <td class="total"><span class="badge-total">142</span></td>
+            <td class="dl"><a href="0011/6.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">7</td>
+            <td class="hide-col code">GHST24</td>
+            <td class="name" data-rank="7"><div class="name-wrap"><div class="name-text">Benjamin</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">62</td>
+            <td class="val">17</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">7</td>
+            <td class="total"><span class="badge-total">139</span></td>
+            <td class="dl"><a href="0011/7.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">8</td>
+            <td class="hide-col code">GHST55</td>
+            <td class="name" data-rank="8"><div class="name-wrap"><div class="name-text">Jenna</div></div></td>
+            <td class="val">20</td>
+            <td class="val">35</td>
+            <td class="val">67</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">8</td>
+            <td class="total"><span class="badge-total">132</span></td>
+            <td class="dl"><a href="0011/8.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">9</td>
+            <td class="hide-col code">GHST64</td>
+            <td class="name" data-rank="9"><div class="name-wrap"><div class="name-text">Ahilya</div></div></td>
+            <td class="val">20</td>
+            <td class="val">22</td>
+            <td class="val">67</td>
+            <td class="val">20</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">9</td>
+            <td class="total"><span class="badge-total">129</span></td>
+            <td class="dl"><a href="0011/9.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">10</td>
+            <td class="hide-col code">GHST12</td>
+            <td class="name" data-rank="10"><div class="name-wrap"><div class="name-text">Hugo</div></div></td>
+            <td class="val">20</td>
+            <td class="val">30</td>
+            <td class="val">62</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">10</td>
+            <td class="total"><span class="badge-total">122</span></td>
+            <td class="dl"><a href="0011/10.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">11</td>
+            <td class="hide-col code">GHST06</td>
+            <td class="name" data-rank="11"><div class="name-wrap"><div class="name-text">Ilona</div></div></td>
+            <td class="val">20</td>
+            <td class="val">22</td>
+            <td class="val">62</td>
+            <td class="val">17</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">11</td>
+            <td class="total"><span class="badge-total">121</span></td>
+            <td class="dl"><a href="0011/11.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="is-ketua">
+            <td class="hide-col">12</td>
+            <td class="hide-col code">GHST54</td>
+            <td class="name" data-rank="12"><div class="name-wrap"><div class="name-text">Chynie</div><span class="badge-ketua">LEAD</span></div></td>
+            <td class="val">20</td>
+            <td class="val">12</td>
+            <td class="val">72</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">12</td>
+            <td class="total"><span class="badge-total">114</span></td>
+            <td class="dl"><a href="0011/12.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">13</td>
+            <td class="hide-col code">GHST13</td>
+            <td class="name" data-rank="13"><div class="name-wrap"><div class="name-text">Dabien</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">36</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">13</td>
+            <td class="total"><span class="badge-total">111</span></td>
+            <td class="dl"><a href="0011/13.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">14</td>
+            <td class="hide-col code">GHST22</td>
+            <td class="name" data-rank="14"><div class="name-wrap"><div class="name-text">Derren</div></div></td>
+            <td class="val">15</td>
+            <td class="val">27</td>
+            <td class="val">62</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">14</td>
+            <td class="total"><span class="badge-total">109</span></td>
+            <td class="dl"><a href="0011/14.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">15</td>
+            <td class="hide-col code">GHST14</td>
+            <td class="name" data-rank="15"><div class="name-wrap"><div class="name-text">Arsyilabae</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">32</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">15</td>
+            <td class="total"><span class="badge-total">107</span></td>
+            <td class="dl"><a href="0011/15.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">16</td>
+            <td class="hide-col code">GHST43</td>
+            <td class="name" data-rank="16"><div class="name-wrap"><div class="name-text">Sabrina</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">36</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">16</td>
+            <td class="total"><span class="badge-total">106</span></td>
+            <td class="dl"><a href="0011/16.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">17</td>
+            <td class="hide-col code">GHST32</td>
+            <td class="name" data-rank="17"><div class="name-wrap"><div class="name-text">Aberaya</div></div></td>
+            <td class="val">20</td>
+            <td class="val">32</td>
+            <td class="val">36</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">17</td>
+            <td class="total"><span class="badge-total">103</span></td>
+            <td class="dl"><a href="0011/17.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">18</td>
+            <td class="hide-col code">GHST57</td>
+            <td class="name" data-rank="18"><div class="name-wrap"><div class="name-text">Albert</div></div></td>
+            <td class="val">20</td>
+            <td class="val">32</td>
+            <td class="val">36</td>
+            <td class="val">15</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">18</td>
+            <td class="total"><span class="badge-total">103</span></td>
+            <td class="dl"><a href="0011/18.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">19</td>
+            <td class="hide-col code">GHST47</td>
+            <td class="name" data-rank="19"><div class="name-wrap"><div class="name-text">Biancha</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">36</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">19</td>
+            <td class="total"><span class="badge-total">101</span></td>
+            <td class="dl"><a href="0011/19.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">20</td>
+            <td class="hide-col code">GHST62</td>
+            <td class="name" data-rank="20"><div class="name-wrap"><div class="name-text">Christabela</div></div></td>
+            <td class="val">20</td>
+            <td class="val">28</td>
+            <td class="val">36</td>
+            <td class="val">16</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">20</td>
+            <td class="total"><span class="badge-total">100</span></td>
+            <td class="dl"><a href="0011/20.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          <tr class="is-ketua">
+            <td class="hide-col">21</td>
+            <td class="hide-col code">GHST03</td>
+            <td class="name" data-rank="21"><div class="name-wrap"><div class="name-text">Velyna</div><span class="badge-ketua">LEAD</span></div></td>
+            <td class="val">20</td>
+            <td class="val">27</td>
+            <td class="val">46</td>
+            <td class="val">7</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">21</td>
+            <td class="total"><span class="badge-total">100</span></td>
+            <td class="dl"><a href="0011/21.jpg" class="btn-dl" download title="Download"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></td>
+          </tr>
+          
+          <tr class="">
+            <td class="hide-col">22</td>
+            <td class="hide-col code">GHST28</td>
+            <td class="name" data-rank="22"><div class="name-wrap"><div class="name-text">Chereya</div></div></td>
+            <td class="val">0</td>
+            <td class="val">40</td>
+            <td class="val">37</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">22</td>
+            <td class="total"><span class="badge-total">82</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">23</td>
+            <td class="hide-col code">GHST45</td>
+            <td class="name" data-rank="23"><div class="name-wrap"><div class="name-text">Yeona</div></div></td>
+            <td class="val">0</td>
+            <td class="val">40</td>
+            <td class="val">32</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">23</td>
+            <td class="total"><span class="badge-total">77</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">24</td>
+            <td class="hide-col code">GHST05</td>
+            <td class="name" data-rank="24"><div class="name-wrap"><div class="name-text">Rayleen</div></div></td>
+            <td class="val">0</td>
+            <td class="val">32</td>
+            <td class="val">37</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">24</td>
+            <td class="total"><span class="badge-total">74</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">25</td>
+            <td class="hide-col code">GHST46</td>
+            <td class="name" data-rank="25"><div class="name-wrap"><div class="name-text">Felix</div></div></td>
+            <td class="val">20</td>
+            <td class="val">40</td>
+            <td class="val">6</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">25</td>
+            <td class="total"><span class="badge-total">71</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">26</td>
+            <td class="hide-col code">GHST01</td>
+            <td class="name" data-rank="26"><div class="name-wrap"><div class="name-text">Kenneth</div></div></td>
+            <td class="val">0</td>
+            <td class="val">35</td>
+            <td class="val">6</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">26</td>
+            <td class="total"><span class="badge-total">51</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">27</td>
+            <td class="hide-col code">GHST61</td>
+            <td class="name" data-rank="27"><div class="name-wrap"><div class="name-text">Amanda</div></div></td>
+            <td class="val">0</td>
+            <td class="val">10</td>
+            <td class="val">32</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">27</td>
+            <td class="total"><span class="badge-total">47</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">28</td>
+            <td class="hide-col code">GHST59</td>
+            <td class="name" data-rank="28"><div class="name-wrap"><div class="name-text">Meloxicam</div></div></td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="val">6</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">28</td>
+            <td class="total"><span class="badge-total">16</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">29</td>
+            <td class="hide-col code">GHST51</td>
+            <td class="name" data-rank="29"><div class="name-wrap"><div class="name-text">Rydeos</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">10</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">29</td>
+            <td class="total"><span class="badge-total">10</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">30</td>
+            <td class="hide-col code">GHST26</td>
+            <td class="name" data-rank="30"><div class="name-wrap"><div class="name-text">Gartisca</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">7</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">30</td>
+            <td class="total"><span class="badge-total">7</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">31</td>
+            <td class="hide-col code">GHST07</td>
+            <td class="name" data-rank="31"><div class="name-wrap"><div class="name-text">Mayiesca</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">31</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">32</td>
+            <td class="hide-col code">GHST08</td>
+            <td class="name" data-rank="32"><div class="name-wrap"><div class="name-text">Deepradjie</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">32</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">33</td>
+            <td class="hide-col code">GHST10</td>
+            <td class="name" data-rank="33"><div class="name-wrap"><div class="name-text">Telka</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">33</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">34</td>
+            <td class="hide-col code">GHST16</td>
+            <td class="name" data-rank="34"><div class="name-wrap"><div class="name-text">Biantara</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">34</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">35</td>
+            <td class="hide-col code">GHST17</td>
+            <td class="name" data-rank="35"><div class="name-wrap"><div class="name-text">Abellocie</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">35</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">36</td>
+            <td class="hide-col code">GHST20</td>
+            <td class="name" data-rank="36"><div class="name-wrap"><div class="name-text">Cassion</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">36</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">37</td>
+            <td class="hide-col code">GHST41</td>
+            <td class="name" data-rank="37"><div class="name-wrap"><div class="name-text">Princela</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">37</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">38</td>
+            <td class="hide-col code">GHST53</td>
+            <td class="name" data-rank="38"><div class="name-wrap"><div class="name-text">Akira</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">38</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">39</td>
+            <td class="hide-col code">GHST56</td>
+            <td class="name" data-rank="39"><div class="name-wrap"><div class="name-text">Dorothy</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">5</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">39</td>
+            <td class="total"><span class="badge-total">5</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">40</td>
+            <td class="hide-col code">GHST04</td>
+            <td class="name" data-rank="40"><div class="name-wrap"><div class="name-text">Revendra</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">40</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">41</td>
+            <td class="hide-col code">GHST09</td>
+            <td class="name" data-rank="41"><div class="name-wrap"><div class="name-text">Elian</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">41</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">42</td>
+            <td class="hide-col code">GHST11</td>
+            <td class="name" data-rank="42"><div class="name-wrap"><div class="name-text">Ashley</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">42</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">43</td>
+            <td class="hide-col code">GHST18</td>
+            <td class="name" data-rank="43"><div class="name-wrap"><div class="name-text">Georgina</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">43</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">44</td>
+            <td class="hide-col code">GHST19</td>
+            <td class="name" data-rank="44"><div class="name-wrap"><div class="name-text">Sheiza</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">44</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">45</td>
+            <td class="hide-col code">GHST23</td>
+            <td class="name" data-rank="45"><div class="name-wrap"><div class="name-text">Easton</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">45</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">46</td>
+            <td class="hide-col code">GHST25</td>
+            <td class="name" data-rank="46"><div class="name-wrap"><div class="name-text">Kalila</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">46</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">47</td>
+            <td class="hide-col code">GHST27</td>
+            <td class="name" data-rank="47"><div class="name-wrap"><div class="name-text">Fujinaka</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">47</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">48</td>
+            <td class="hide-col code">GHST29</td>
+            <td class="name" data-rank="48"><div class="name-wrap"><div class="name-text">Reylsha</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">48</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">49</td>
+            <td class="hide-col code">GHST30</td>
+            <td class="name" data-rank="49"><div class="name-wrap"><div class="name-text">Jingxiao</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">49</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">50</td>
+            <td class="hide-col code">GHST31</td>
+            <td class="name" data-rank="50"><div class="name-wrap"><div class="name-text">Mirielle</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">50</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">51</td>
+            <td class="hide-col code">GHST33</td>
+            <td class="name" data-rank="51"><div class="name-wrap"><div class="name-text">Jaylik</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">51</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">52</td>
+            <td class="hide-col code">GHST34</td>
+            <td class="name" data-rank="52"><div class="name-wrap"><div class="name-text">Mocachery</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">52</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">53</td>
+            <td class="hide-col code">GHST36</td>
+            <td class="name" data-rank="53"><div class="name-wrap"><div class="name-text">Shabila</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">53</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">54</td>
+            <td class="hide-col code">GHST37</td>
+            <td class="name" data-rank="54"><div class="name-wrap"><div class="name-text">Sentra</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">54</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">55</td>
+            <td class="hide-col code">GHST38</td>
+            <td class="name" data-rank="55"><div class="name-wrap"><div class="name-text">Rune</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">55</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">56</td>
+            <td class="hide-col code">GHST39</td>
+            <td class="name" data-rank="56"><div class="name-wrap"><div class="name-text">Normaft</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">56</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">57</td>
+            <td class="hide-col code">GHST40</td>
+            <td class="name" data-rank="57"><div class="name-wrap"><div class="name-text">Pascal</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">57</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">58</td>
+            <td class="hide-col code">GHST42</td>
+            <td class="name" data-rank="58"><div class="name-wrap"><div class="name-text">Rayyan</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">58</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">59</td>
+            <td class="hide-col code">GHST44</td>
+            <td class="name" data-rank="59"><div class="name-wrap"><div class="name-text">Argovashzar</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">59</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">60</td>
+            <td class="hide-col code">GHST49</td>
+            <td class="name" data-rank="60"><div class="name-wrap"><div class="name-text">Kairos</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">60</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">61</td>
+            <td class="hide-col code">GHST52</td>
+            <td class="name" data-rank="61"><div class="name-wrap"><div class="name-text">Deryll</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">61</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">62</td>
+            <td class="hide-col code">GHST58</td>
+            <td class="name" data-rank="62"><div class="name-wrap"><div class="name-text">Niana</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">62</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">63</td>
+            <td class="hide-col code">GHST60</td>
+            <td class="name" data-rank="63"><div class="name-wrap"><div class="name-text">Karan</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">63</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">64</td>
+            <td class="hide-col code">GHST63</td>
+            <td class="name" data-rank="64"><div class="name-wrap"><div class="name-text">Teresha</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">64</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">65</td>
+            <td class="hide-col code">GHST65</td>
+            <td class="name" data-rank="65"><div class="name-wrap"><div class="name-text">Jasmine</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">65</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
+          </tr>
+          <tr class="">
+            <td class="hide-col">66</td>
+            <td class="hide-col code">GHST66</td>
+            <td class="name" data-rank="66"><div class="name-wrap"><div class="name-text">Orliana</div></div></td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="val">0</td>
+            <td class="hide-col">GHOST-0011</td>
+            <td class="hide-col">66</td>
+            <td class="total"><span class="badge-total">0</span></td>
+            <td class="dl"><span class="x-mark">X</span></td>
           </tr>
         </tbody>
       </table>

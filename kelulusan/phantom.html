@@ -18,8 +18,7 @@
 
   <style>
     :root {
-      /* Perubahan warna utama dari Ungu ke Biru Neon */
-      --neon-blue: #00d2ff;
+      var(--neon-blue): #00d2ff;
       --neon-blue-strong: #0099ff;
       --deep-blue: #000a1a;
       --bg-black: #030406;
@@ -28,12 +27,10 @@
       --text: #f0faff;
       --muted: rgba(240, 250, 255, 0.68);
       
-      /* Warna aksen tetap untuk status */
       --green: #00ff9d;
       --red: #ff4d4d;
       --shadow: 0 15px 40px rgba(0, 0, 0, .4);
 
-      /* Warna Cyan untuk Report tetap sama karena sudah biru */
       --cyan: #00f0ff;
       --dark-cyan: #005b66;
       --text-label: #00c3d9;
@@ -95,7 +92,7 @@
 
     .scanline {
       position: absolute; width: 100%; height: 3px; background: rgba(0, 210, 255, 0.4);
-      box-shadow: 0 0 10px var(--neon-blue);
+      box-shadow: 0 0 10px #00d2ff;
       top: 0; left: 0; z-index: 50; pointer-events: none; opacity: 0.5;
       animation: scanEffect 4s ease-in-out infinite;
       will-change: top;
@@ -111,8 +108,8 @@
       text-align: center; line-height: 1.1; margin-top: 4px; text-shadow: 0 0 15px rgba(0, 210, 255, .3); font-weight: 900;
     }
 
-    #typing-text::after { content: '|'; margin-left: 6px; color: var(--neon-blue); animation: blink 1s step-end infinite; }
-    .tagline { text-align: center; margin-top: 10px; color: var(--neon-blue); font-family: 'Share Tech Mono', monospace; letter-spacing: 2.4px; font-size: .88rem; text-transform: uppercase; }
+    #typing-text::after { content: '|'; margin-left: 6px; color: #00d2ff; animation: blink 1s step-end infinite; }
+    .tagline { text-align: center; margin-top: 10px; color: #00d2ff; font-family: 'Share Tech Mono', monospace; letter-spacing: 2.4px; font-size: .88rem; text-transform: uppercase; }
     .top-note { text-align: center; margin-top: 10px; color: var(--muted); font-size: .67rem; line-height: 1.6; }
 
     .input-area { margin-top: 22px; display: flex; justify-content: center; }
@@ -133,15 +130,14 @@
       text-transform: uppercase; color: #fff; background: linear-gradient(180deg, rgba(0, 210, 255, .90), rgba(0, 153, 255, .90));
       box-shadow: 0 8px 20px rgba(0, 210, 255, .15); transition: .2s ease;
     }
-    /* Tombol kedua (REPORT) disesuaikan nadanya ke biru gelap */
     .btn-cyber:nth-child(2) { background: linear-gradient(180deg, rgba(15, 20, 35, .98), rgba(10, 12, 25, .98)); border: 1px solid rgba(0, 210, 255, .28); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
     .btn-cyber:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 210, 255, .3); }
     .btn-cyber:active { transform: translateY(0); }
     .btn-cyber:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
     .loading {
-      margin-top: 16px; text-align: center; color: var(--neon-blue); font-family: 'Share Tech Mono', monospace;
-      letter-spacing: 1.4px; font-size: .98rem; min-height: 22px; text-shadow: 0 0 8px var(--neon-blue);
+      margin-top: 16px; text-align: center; color: #00d2ff; font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 1.4px; font-size: .98rem; min-height: 22px; text-shadow: 0 0 8px #00d2ff;
     }
     .decrypt-chars { color: #fff; font-weight: bold; opacity: 0.8; }
 
@@ -160,9 +156,7 @@
       max-width: 650px; margin: 0;
     }
 
-    /* Merah tetap untuk Failed */
     .result-card.failed { border: 1px solid rgba(255, 77, 77, 0.3); background: rgba(28, 8, 12, 0.9); }
-    /* Sys-error diubah aksennya ke biru */
     .result-card.sys-error { border: 1px solid rgba(0, 210, 255, 0.3); background: rgba(10, 15, 30, 0.9); }
     .result-card .result-title { color: #ffd5d5; margin-bottom: 5px; font-weight: bold;}
     .result-card.sys-error .result-title { color: #d0f0ff; }
@@ -178,9 +172,7 @@
       position: relative; overflow: hidden; width: 100%; max-width: 650px; margin: 0 auto;
     }
 
-    /* Hijau untuk Passed tetap */
     .report-shell.passed { border-color: rgba(0,255,157,.22); background: linear-gradient(180deg, rgba(10, 20, 15, .9), rgba(5, 12, 8, .9)); }
-    /* Merah untuk Failed tetap */
     .report-shell.failed { border-color: rgba(255, 77, 77, .22); background: linear-gradient(180deg, rgba(25, 10, 12, .9), rgba(12, 5, 8, .9)); }
 
     .report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: clamp(8px, 2vw, 14px); padding-bottom: clamp(8px, 2vw, 12px); margin-bottom: clamp(10px, 2.5vw, 14px); border-bottom: 1px solid rgba(0, 210, 255, .16); position: relative; z-index: 1; }
@@ -215,10 +207,23 @@
     .report-shell.failed .detail-item::before { background-color: var(--red); }
     
     .detail-label { font-family: var(--font-mono); font-size: clamp(0.4rem, 1.5vw, 0.6rem); color: var(--text-label); letter-spacing: 1.2px; margin-bottom: 2px; display: block; }
-    .detail-value { font-size: clamp(0.6rem, 2.5vw, 0.95rem); font-weight: 600; color: var(--text-white); letter-spacing: 1px; word-break: break-word; line-height: 1.2; }
+    .detail-value { font-size: clamp(0.6rem, 2.5vw, 0.95rem); font-weight: 600; color: var(--text-white); letter-spacing: 1px; word-break: break-word; line-height: 1.2; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .system-message { font-family: var(--font-mono); color: rgba(255,255,255,.8); line-height: 1.4; font-size: clamp(0.45rem, 1.8vw, 0.7rem); margin-top: clamp(6px, 1.5vw, 12px); }
 
-    /* Stamp sukses tetap hijau, gagal tetap merah */
+    .agent-badge {
+      display: inline-block;
+      background: #00d2ff;
+      color: #000a1a;
+      padding: 1px 6px 2px;
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: 900;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+      white-space: nowrap;
+    }
+
     .stamp-overlay {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
       font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: 6px;
@@ -251,7 +256,8 @@
   <div class="page">
     <div class="shell">
       <div class="top-accent"></div>
-      <div class="scanline"></div> <div class="logo-animated">
+      <div class="scanline"></div> 
+      <div class="logo-animated">
         <img src="logop.png" alt="ARM Logo" onerror="this.style.display='none'">
       </div>
 
@@ -260,12 +266,12 @@
       <p class="top-note">[ SYS.OP ] Masukkan access code untuk melihat hasil.</p>
 
       <div class="input-area">
-        <input type="text" id="codeInput"oninput="this.value = this.value.toUpperCase()"placeholder="ENTER ACCESS CODE" autocomplete="off" spellcheck="false" />
+        <input type="text" id="codeInput" oninput="this.value = this.value.toUpperCase()" placeholder="ENTER ACCESS CODE" autocomplete="off" spellcheck="false" />
       </div>
 
       <div class="button-container">
         <button class="btn-cyber" id="checkBtn" onclick="checkResult()">Result Scan</button>
-        <button class="btn-cyber" onclick="window.open('../database.html', '_blank')">REPORT</button>
+        <button class="btn-cyber" onclick="openReport()">REPORT</button>
       </div>
 
       <div class="loading" id="loading" style="display:none;"></div>
@@ -288,6 +294,22 @@
 
     const text = "ARM_OS";
     let index = 0;
+
+    // FUNGSI PENGECEKAN WAKTU UNTUK SCAN
+    function isScanAccessOpen() {
+      const now = new Date();
+      const startTime = new Date(2026, 6, 8, 17, 0, 0); // 8 Juli 2026 05:00
+      const endTime = new Date(2026, 6, 9, 23, 0, 0);  // 8 Juli 2026 20:00
+      return now >= startTime && now <= endTime;
+    }
+
+    // FUNGSI PENGECEKAN WAKTU KHUSUS UNTUK TOMBOL REPORT
+    function isReportAccessOpen() {
+      const now = new Date();
+      const startTime = new Date(2026, 6, 8, 19, 0, 0); // Atur jam buka link point_0002.html di sini
+      const endTime = new Date(2026, 6, 9, 9, 0, 0);
+      return now >= startTime && now <= endTime;
+    }
 
     function escapeHtml(text) {
       return String(text ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
@@ -312,7 +334,23 @@
       return fallback;
     }
 
+    // DETEKSI DAN HAPUS TULISAN "LEAD" MESKIPUN MENEMPEL (contoh: velynaLEAD)
+    function checkAndCleanLead(obj) {
+      let isLead = false;
+      for (const key in obj) {
+        if (typeof obj[key] === 'string' && /lead/i.test(obj[key])) {
+          isLead = true;
+          // Menggunakan /lead/ig untuk menghapus kata lead (tidak peduli huruf besar/kecil) di mana pun letaknya
+          obj[key] = obj[key].replace(/[\(\[\{\-_/]*lead[\)\}\]\-_/]*/ig, '').replace(/\s{2,}/g, ' ').trim(); 
+        }
+      }
+      obj.isLead = isLead;
+      return obj;
+    }
+
     function renderReportCard(data, passed, message = "") {
+      const leadBadgeHTML = data.isLead ? `<span class="agent-badge">❖ LEAD</span>` : '';
+
       return `
         <div class="report-shell ${passed ? 'passed' : 'failed'} glitch-anim">
           <div class="stamp-overlay ${passed ? 'success' : 'fail'}">
@@ -323,7 +361,7 @@
               <div class="report-logo">ARM</div>
               <div class="report-divider"></div>
               <div class="report-title">
-                <h2>DECRYPTED PAYLOAD</h2>
+                <h2>ARCHIVE AGENT</h2>
                 <p>${passed ? 'AUTHORIZED MEMBER' : 'UNAUTHORIZED / RESTRICTED'}</p>
               </div>
             </div>
@@ -337,7 +375,10 @@
             <div class="panel panel-middle" style="width: 100%;">
               <div class="detail-item">
                 <span class="detail-label">NICKNAME</span>
-                <span class="detail-value">${escapeHtml(data.nickname || 'NO DATA')}</span>
+                <span class="detail-value">
+                  ${escapeHtml(data.nickname || 'NO DATA')} 
+                  ${leadBadgeHTML}
+                </span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">ACCESS CODE</span>
@@ -345,7 +386,7 @@
               </div>
               <div class="detail-item">
                 <span class="detail-label">UNIT</span>
-                <span class="detail-value">${escapeHtml(data.unit || 'PHANTOM')}</span>
+                <span class="detail-value">${escapeHtml(data.unit || 'OMEGA')}</span>
               </div>
               ${message ? `<div class="system-message">${message}</div>` : ''}
             </div>
@@ -389,7 +430,7 @@
 
         const aliases = Object.keys(rowMap).reduce((acc, k) => { acc[normalizeKey(k)] = rowMap[k]; return acc; }, {});
 
-        return {
+        let rawItem = {
           rank: pickField(aliases, ['rank'], rowMap.rank),
           accessCode: pickField(aliases, ['accesscode', 'kodeakses', 'access'], rowMap.accesscode),
           nickname: pickField(aliases, ['nickname', 'name', 'nama', 'agent'], rowMap.nickname),
@@ -403,6 +444,9 @@
           total: toNumber(pickField(aliases, ['total'], rowMap.total)),
           clearance: pickField(aliases, ['clearance', 'clearancelevel'], ''),
         };
+
+        return checkAndCleanLead(rawItem);
+
       }).filter(item => item.accessCode || item.nickname);
     }
 
@@ -415,11 +459,14 @@
 
       if (!rows.length) {
         const texts = [...doc.querySelectorAll('tr')].map(tr => [...tr.querySelectorAll('td,th')].map(el => el.textContent.trim()));
-        rows = texts.map(cells => ({
-          accessCode: cells[1] || '', nickname: cells[2] || '', total: toNumber(cells[cells.length - 1]),
-          easy: toNumber(cells[3]), medpp: toNumber(cells[4]), hard: toNumber(cells[5]), event: toNumber(cells[6]),
-          faceClaim: '', unit: '', generasi: '', clearance: '',
-        })).filter(item => item.accessCode || item.nickname);
+        rows = texts.map(cells => {
+          let rawItem = {
+            accessCode: cells[1] || '', nickname: cells[2] || '', total: toNumber(cells[cells.length - 1]),
+            easy: toNumber(cells[3]), medpp: toNumber(cells[4]), hard: toNumber(cells[5]), event: toNumber(cells[6]),
+            faceClaim: '', unit: '', generasi: '', clearance: '',
+          };
+          return checkAndCleanLead(rawItem);
+        }).filter(item => item.accessCode || item.nickname);
       }
       return rows;
     }
@@ -443,8 +490,15 @@
     }
 
     async function checkResult() {
-      const code = normalizeCode(codeInput.value);
       resultDiv.innerHTML = '';
+
+      // Menggunakan waktu Scan
+      if (!isScanAccessOpen()) {
+        resultDiv.innerHTML = renderTextCard('SYSTEM LOCKED', `<span class="error-text">Akses scan hanya dibuka pada:<br><span class="code-highlight">8 Juli 2026 (05.00 - 20.00 WIB)</span></span>`, 'sys-error');
+        return;
+      }
+
+      const code = normalizeCode(codeInput.value);
       if (!code) {
         resultDiv.innerHTML = renderTextCard('SYS.ERR // KODE KOSONG', `<span class="error-text">Access code belum diisi.</span>`, 'sys-error');
         return;
@@ -476,6 +530,18 @@
       }
     }
 
+    // FUNGSI BARU UNTUK KLIK TOMBOL REPORT
+    function openReport() {
+      // Menggunakan aturan waktu Report
+      if (!isReportAccessOpen()) {
+        // Jika belum waktunya, lempar ke wait.html
+        window.open('wait.html', '_blank');
+      } else {
+        // Jika sudah waktunya, lempar ke point_0002.html
+        window.open('point_0002.html', '_blank');
+      }
+    }
+
     document.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkResult(); });
 
     const canvas = document.createElement('canvas');
@@ -497,7 +563,6 @@
     function drawMatrix() {
       ctx.fillStyle = 'rgba(0,0,0,0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      /* Warna hujan matrix diubah ke biru */
       ctx.fillStyle = 'rgba(0, 210, 255, 0.32)';
       ctx.font = fontSize + "px 'Share Tech Mono'";
 
